@@ -6,11 +6,10 @@ const LABELS = ['A', 'B', 'C', 'D']
 type Props = {
   question: Question
   answers: Answer[]
-  totalTeams: number
   revealed: boolean
 }
 
-export function AnswerDistribution({ question, answers, totalTeams, revealed }: Props) {
+export function AnswerDistribution({ question, answers, revealed }: Props) {
   const counts = question.options.map((_, i) =>
     answers.filter(a => a.answer === question.options[i]).length
   )

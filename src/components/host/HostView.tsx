@@ -122,7 +122,6 @@ export function HostView({ gameState, send }: Props) {
             <AnswerDistribution
               question={question}
               answers={answers}
-              totalTeams={teams.length}
               revealed={phase === 'reveal'}
             />
             {phase === 'reveal' && (
