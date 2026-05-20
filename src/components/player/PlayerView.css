@@ -1,0 +1,167 @@
+.player-view {
+  min-height: 100vh;
+  background: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Qmusic: white bg, red banner for question area */
+[data-theme="qmusic"] .player-question-area {
+  background: #E8201E;
+  padding: 20px 20px 24px;
+}
+[data-theme="qmusic"] .player-answers-area {
+  background: #ffffff;
+  flex: 1;
+  padding: 20px;
+}
+
+/* Joe: blue bg for question area, white for answers */
+[data-theme="joe"] .player-question-area {
+  background: #2B72D4;
+  padding: 20px 20px 24px;
+  position: relative;
+  overflow: hidden;
+}
+[data-theme="joe"] .player-question-area::after {
+  content: '';
+  position: absolute;
+  bottom: -50px; right: -50px;
+  width: 180px; height: 180px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 50%;
+  pointer-events: none;
+}
+[data-theme="joe"] .player-answers-area {
+  background: #ffffff;
+  flex: 1;
+  padding: 20px;
+}
+[data-theme="joe"] .player-answers-area .answer-btn {
+  color: #2B72D4;
+}
+
+/* Base: unified dark */
+[data-theme="base"] .player-question-area {
+  padding: 20px;
+}
+[data-theme="base"] .player-answers-area {
+  flex: 1;
+  padding: 20px;
+}
+
+.player-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.player-brand {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: var(--color-text);
+  letter-spacing: 1px;
+}
+[data-theme="qmusic"] .player-brand { color: #E8201E; background: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.9rem; }
+[data-theme="joe"] .player-brand { color: #fff; }
+.player-team-name {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+.player-q-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+.player-q-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--color-text-muted);
+  font-family: var(--font-body);
+}
+.player-question-text {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--color-text);
+  line-height: 1.35;
+  margin-bottom: 0;
+}
+[data-theme="qmusic"] .player-question-text {
+  text-transform: uppercase;
+  font-size: 1rem;
+}
+
+.player-locked {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  padding: 40px 20px;
+}
+.player-locked-icon { font-size: 2.5rem; }
+
+.player-explanation {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-top: 16px;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+[data-theme="qmusic"] .player-explanation { background: #f8f8f8; color: #555; }
+[data-theme="joe"] .player-explanation { background: #f0f4fd; color: #2B72D4; }
+
+.player-score {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 14px;
+  padding: 10px 14px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+.player-score-pts { font-weight: 700; color: var(--color-correct); }
+
+/* Leaderboard state */
+.player-leaderboard {
+  min-height: 100vh;
+  background: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+  gap: 20px;
+}
+.player-lb-title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--color-text);
+  letter-spacing: 2px;
+}
+.player-lb-list { width: 100%; max-width: 360px; }
+.player-lb-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+.player-lb-rank { font-size: 0.85rem; color: var(--color-text-muted); min-width: 24px; font-weight: 700; }
+.player-lb-name { flex: 1; font-weight: 600; color: var(--color-text); }
+.player-lb-score { font-weight: 700; color: var(--color-accent); }
+.player-lb-me { background: rgba(var(--color-accent-rgb), 0.08); border-radius: 8px; }

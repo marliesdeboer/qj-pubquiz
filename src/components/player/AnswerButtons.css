@@ -1,0 +1,65 @@
+.answer-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.answer-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 16px 18px;
+  background: var(--color-btn-bg);
+  border: 2px solid var(--color-btn-border);
+  border-radius: 12px;
+  color: var(--color-btn-text);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+/* Joe theme: pill buttons */
+[data-theme="joe"] .answer-btn {
+  border-radius: 30px;
+}
+/* Qmusic theme: square-ish */
+[data-theme="qmusic"] .answer-btn {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  border-radius: 6px;
+}
+.answer-btn:hover:not(:disabled) {
+  border-color: var(--color-accent);
+}
+.answer-btn.selected {
+  background: var(--color-btn-sel-bg);
+  border-color: var(--color-btn-sel-border);
+  color: var(--color-btn-sel-text);
+}
+.answer-btn.correct {
+  background: var(--color-correct);
+  border-color: var(--color-correct);
+  color: #fff;
+}
+.answer-btn.incorrect {
+  opacity: 0.45;
+}
+.answer-btn:disabled {
+  cursor: default;
+}
+.answer-opt {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  min-width: 20px;
+  opacity: 0.8;
+}
+.answer-btn.selected .answer-opt,
+.answer-btn.correct .answer-opt {
+  color: inherit;
+  opacity: 1;
+}
