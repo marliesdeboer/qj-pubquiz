@@ -25,8 +25,12 @@ export function useGameSocket() {
     const onOpen = () => setConnected(true)
     const onClose = () => setConnected(false)
     const onMessage = (event: MessageEvent) => {
-      const msg = JSON.parse(event.data as string) as ServerMessage
-      if (msg.type === 'STATE_UPDATE') setGameState(msg.state)
+      try {
+        const msg = JSON.parse(event.data as string) as ServerMessage
+        if (msg.type === 'STATE_UPDATE' && msg.state) setGameState(msg.state)
+      } catch {
+        // ignore malformed messages
+      }
     }
     socket.addEventListener('open', onOpen)
     socket.addEventListener('close', onClose)
