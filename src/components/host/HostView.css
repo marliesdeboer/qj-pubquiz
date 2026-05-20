@@ -1,0 +1,170 @@
+.host-pin-gate {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: #0A0A0F;
+  color: #E8E8E8;
+}
+.host-pin-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 2px; }
+.host-pin-input {
+  padding: 12px 16px;
+  background: #111118;
+  border: 1.5px solid #2e2e3e;
+  border-radius: 8px;
+  color: #E8E8E8;
+  font-size: 1.2rem;
+  text-align: center;
+  letter-spacing: 4px;
+  width: 200px;
+  outline: none;
+}
+.host-pin-input.error { border-color: #e84545; }
+.host-pin-btn {
+  padding: 12px 24px;
+  background: #E8E8E8;
+  color: #0A0A0F;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* Host layout */
+.host-view {
+  min-height: 100vh;
+  background: #0A0A0F;
+  color: #E8E8E8;
+  font-family: 'DM Sans', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+.host-topbar {
+  background: #111118;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #1e1e2e;
+  flex-shrink: 0;
+}
+.host-topbar-title { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 2px; }
+.host-topbar-meta { font-size: 0.7rem; color: #555; }
+.host-reset-btn {
+  font-size: 0.65rem;
+  color: #e84545;
+  border: 1px solid rgba(232,69,69,0.3);
+  border-radius: 4px;
+  padding: 4px 10px;
+  background: transparent;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.host-main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Left: question + chart */
+.host-left {
+  flex: 1;
+  padding: 20px;
+  border-right: 1px solid #1e1e2e;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.host-q-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.host-q-label { font-size: 0.65rem; color: #555; text-transform: uppercase; letter-spacing: 1px; }
+.host-question-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #E8E8E8;
+  line-height: 1.45;
+}
+.host-dist-label { font-size: 0.6rem; color: #555; text-transform: uppercase; letter-spacing: 1px; }
+.host-explanation {
+  background: #111118;
+  border: 1px solid #1e1e2e;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 0.8rem;
+  color: #888;
+  line-height: 1.5;
+}
+.host-explanation strong { color: #aaa; }
+
+/* Right: controls */
+.host-right {
+  width: 180px;
+  padding: 20px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.host-section-label {
+  font-size: 0.55rem;
+  color: #444;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.host-ctrl-btn {
+  width: 100%;
+  padding: 11px 10px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  text-align: center;
+}
+.host-ctrl-btn.primary { background: #E8E8E8; color: #0A0A0F; border: none; }
+.host-ctrl-btn.secondary { background: transparent; color: #E8E8E8; border: 1.5px solid #2e2e3e; }
+.host-ctrl-btn:disabled { background: transparent; color: #333; border: 1.5px solid #1a1a2a; cursor: default; }
+.host-divider { height: 1px; background: #1e1e2e; }
+
+/* Lobby state */
+.host-lobby {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 40px;
+}
+.host-lobby-title { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; letter-spacing: 3px; }
+.host-lobby-teams { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.host-team-pill {
+  background: #111118;
+  border: 1px solid #2e2e3e;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  color: #aaa;
+}
+.host-start-btn {
+  padding: 14px 32px;
+  background: #E8E8E8;
+  color: #0A0A0F;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.host-start-btn:disabled { opacity: 0.4; cursor: default; }
