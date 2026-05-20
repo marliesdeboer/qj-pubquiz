@@ -1,0 +1,13 @@
+.leaderboard { display: flex; flex-direction: column; gap: 4px; }
+.lb-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.8rem;
+}
+.lb-row:last-child { border-bottom: none; }
+.lb-rank { color: var(--color-text-muted); min-width: 18px; font-weight: 700; font-size: 0.7rem; }
+.lb-name { flex: 1; color: var(--color-text-muted); }
+.lb-score { font-weight: 700; color: var(--color-text); }
