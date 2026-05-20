@@ -24,7 +24,12 @@ export default class QuizServer implements Party.Server {
   }
 
   onMessage(raw: string, sender: Party.Connection) {
-    const msg = JSON.parse(raw) as ClientMessage
+    let msg: ClientMessage
+    try {
+      msg = JSON.parse(raw) as ClientMessage
+    } catch {
+      return
+    }
 
     switch (msg.type) {
       case 'JOIN': {
@@ -40,6 +45,8 @@ export default class QuizServer implements Party.Server {
 
       case 'SUBMIT_ANSWER': {
         if (this.state.phase !== 'question') return
+        const teamExists = this.state.teams.some(t => t.id === msg.teamId)
+        if (!teamExists) return
         const alreadyAnswered = this.state.answers.some(a => a.teamId === msg.teamId)
         if (alreadyAnswered) return
         this.state = {
@@ -78,6 +85,7 @@ export default class QuizServer implements Party.Server {
       case 'REVEAL': {
         if (!msg.isHost) return
         if (this.state.phase !== 'question') return
+        if (this.state.currentQuestion >= QUESTIONS.length) return
         const question = QUESTIONS[this.state.currentQuestion]
         // Award points (not for pure opinion questions where correctIndex === -1)
         const updatedTeams = this.state.teams.map(team => {
