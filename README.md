@@ -1,50 +1,49 @@
-# React + TypeScript + Vite
+# Q&J Pubquiz
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Real-time multiplayer pub quiz voor de Q&J leadership session.
 
-Currently, two official plugins are available:
+## Setup in 5 stappen
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. **Clone & installeer**
+   ```bash
+   git clone <repo-url>
+   cd <repo>
+   npm install
+   ```
 
-## Expanding the ESLint configuration
+2. **Deploy PartyKit server**
+   ```bash
+   npx partykit login
+   npx partykit deploy
+   ```
+   Noteer de URL: `your-project.username.partykit.dev`
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+3. **Stel environment variable in**
 
-- Configure the top-level `parserOptions` property like this:
+   In Cloudflare Pages dashboard → Settings → Environment variables:
+   ```
+   VITE_PARTYKIT_HOST = your-project.username.partykit.dev
+   ```
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+4. **Deploy naar Cloudflare Pages**
+
+   Verbind je GitHub repo in het Cloudflare Pages dashboard:
+   - Build command: `npm run build`
+   - Output directory: `dist`
+
+5. **Start de quiz**
+
+   - **Spelers**: open de Cloudflare Pages URL op hun laptop
+   - **Host**: open `<url>/host` en log in met PIN `qjhost2025`
+
+## Lokaal ontwikkelen
+
+```bash
+# Terminal 1
+npx partykit dev
+
+# Terminal 2
+npm run dev
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+Open `http://localhost:5173` (speler) en `http://localhost:5173/host` (host).
