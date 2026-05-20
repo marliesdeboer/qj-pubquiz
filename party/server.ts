@@ -103,6 +103,7 @@ export default class QuizServer implements Party.Server {
         if (!msg.isHost) return
         if (this.state.phase !== 'leaderboard') return
         const nextQuestion = this.state.currentQuestion + 1
+        if (nextQuestion >= QUESTIONS.length) return
         const nextRound = this.state.currentRound + 1
         this.state = {
           ...this.state,
