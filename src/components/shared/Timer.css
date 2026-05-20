@@ -1,0 +1,31 @@
+.timer-root {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.timer-number {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: var(--color-text);
+  line-height: 1;
+  transition: color 0.3s;
+}
+.timer-number.urgent {
+  color: var(--color-timer-urgent);
+}
+.timer-bar-track {
+  height: 4px;
+  background: rgba(128,128,128,0.2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.timer-bar-fill {
+  height: 100%;
+  background: var(--timer-bar-color);
+  border-radius: 2px;
+  transition: width 1s linear, background 0.3s;
+}
+.timer-bar-fill.urgent {
+  background: var(--color-timer-urgent);
+}
