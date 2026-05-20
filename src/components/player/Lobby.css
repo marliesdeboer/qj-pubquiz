@@ -1,0 +1,87 @@
+.lobby {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+  background: var(--color-bg);
+}
+.lobby-title {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--color-text);
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+  text-align: center;
+}
+.lobby-sub {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin-bottom: 32px;
+  text-align: center;
+}
+.lobby-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 320px;
+}
+.lobby-input {
+  padding: 14px 16px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+  font-size: 1rem;
+  font-family: var(--font-body);
+  outline: none;
+}
+.lobby-input:focus {
+  border-color: var(--color-accent);
+}
+.lobby-btn {
+  padding: 14px;
+  background: var(--color-accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+.lobby-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.lobby-teams {
+  margin-top: 32px;
+  width: 100%;
+  max-width: 320px;
+}
+.lobby-teams-label {
+  font-size: 0.65rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+.lobby-team-pill {
+  display: inline-block;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin: 3px;
+}
+.lobby-waiting {
+  margin-top: 24px;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  text-align: center;
+}
