@@ -1,0 +1,4 @@
+{
+  "name": "qj-quiz",
+  "main": "party/server.ts"
+}
