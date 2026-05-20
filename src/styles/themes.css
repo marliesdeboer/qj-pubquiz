@@ -1,0 +1,68 @@
+/* ── Base theme (Rounds 1 & 2) ─────────────────────────── */
+[data-theme="base"] {
+  --color-bg:           #0A0A0F;
+  --color-surface:      #111118;
+  --color-border:       #1e1e2e;
+  --color-text:         #E8E8E8;
+  --color-text-muted:   #555555;
+  --color-accent:       #E8E8E8;
+  --color-accent-rgb:   232, 232, 232;
+  --color-correct:      #4ade80;
+  --color-incorrect:    #e84545;
+  --color-timer-urgent: #e84545;
+  --color-btn-bg:       #111118;
+  --color-btn-border:   #2e2e3e;
+  --color-btn-text:     #E8E8E8;
+  --color-btn-sel-bg:   #1a1a2a;
+  --color-btn-sel-border: #E8E8E8;
+  --color-btn-sel-text: #E8E8E8;
+  --font-display:       'Bebas Neue', sans-serif;
+  --font-body:          'DM Sans', sans-serif;
+  --timer-bar-color:    #E8E8E8;
+}
+
+/* ── Qmusic theme (Round 3) ────────────────────────────── */
+[data-theme="qmusic"] {
+  --color-bg:           #ffffff;
+  --color-surface:      #ffffff;
+  --color-border:       #e8e8e8;
+  --color-text:         #111111;
+  --color-text-muted:   #aaaaaa;
+  --color-accent:       #E8201E;
+  --color-accent-rgb:   232, 32, 30;
+  --color-correct:      #2bb04a;
+  --color-incorrect:    #cc2020;
+  --color-timer-urgent: #b01010;
+  --color-btn-bg:       #ffffff;
+  --color-btn-border:   #e8e8e8;
+  --color-btn-text:     #111111;
+  --color-btn-sel-bg:   #111111;
+  --color-btn-sel-border: #111111;
+  --color-btn-sel-text: #ffffff;
+  --font-display:       'Montserrat', sans-serif;
+  --font-body:          'DM Sans', sans-serif;
+  --timer-bar-color:    #E8201E;
+}
+
+/* ── Joe theme (Round 4) ───────────────────────────────── */
+[data-theme="joe"] {
+  --color-bg:           #2B72D4;
+  --color-surface:      #ffffff;
+  --color-border:       rgba(255,255,255,0.15);
+  --color-text:         #ffffff;
+  --color-text-muted:   rgba(255,255,255,0.5);
+  --color-accent:       #E8365D;
+  --color-accent-rgb:   232, 54, 93;
+  --color-correct:      #4ade80;
+  --color-incorrect:    #ff6b6b;
+  --color-timer-urgent: #E8365D;
+  --color-btn-bg:       #ffffff;
+  --color-btn-border:   rgba(255,255,255,0.2);
+  --color-btn-text:     #2B72D4;
+  --color-btn-sel-bg:   #2B72D4;
+  --color-btn-sel-border: #ffffff;
+  --color-btn-sel-text: #ffffff;
+  --font-display:       'Nunito', sans-serif;
+  --font-body:          'Nunito', sans-serif;
+  --timer-bar-color:    #ffffff;
+}
