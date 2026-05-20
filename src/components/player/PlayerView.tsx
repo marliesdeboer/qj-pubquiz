@@ -4,6 +4,7 @@ import { QUESTIONS, getTimerForRound } from '../../data/questions'
 import { Timer } from '../shared/Timer'
 import { AnswerButtons } from './AnswerButtons'
 import { Lobby } from './Lobby'
+import { EndScreen } from './EndScreen'
 import './PlayerView.css'
 
 type Props = {
@@ -42,13 +43,15 @@ export function PlayerView({ gameState, teamId, send }: Props) {
     return <Lobby gameState={gameState} teamId={teamId} send={send} />
   }
 
-  if (phase === 'leaderboard' || phase === 'finished') {
+  if (phase === 'finished') {
+    return <EndScreen teams={teams} teamId={teamId} />
+  }
+
+  if (phase === 'leaderboard') {
     const sorted = [...teams].sort((a, b) => b.score - a.score)
     return (
       <div className="player-leaderboard">
-        <div className="player-lb-title">
-          {phase === 'finished' ? 'EINDSTAND 🏆' : `STAND NA RONDE ${currentRound - 1}`}
-        </div>
+        <div className="player-lb-title">{`STAND NA RONDE ${currentRound - 1}`}</div>
         <div className="player-lb-list">
           {sorted.map((team, i) => (
             <div key={team.id} className={`player-lb-row ${team.id === teamId ? 'player-lb-me' : ''}`}>
