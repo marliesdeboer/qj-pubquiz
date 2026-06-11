@@ -28,7 +28,29 @@
       "mcp__Notion__notion-fetch",
       "mcp__Notion__notion-get-comments",
       "mcp__Notion__notion-get-users",
-      "mcp__Notion__notion-get-teams"
+      "mcp__Notion__notion-get-teams",
+      "Edit",
+      "Write",
+      "WebFetch",
+      "WebSearch",
+      "Bash(npm install*)",
+      "Bash(npm ci*)",
+      "Bash(npm run dev)",
+      "Bash(npx partykit dev*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "Bash(git push origin claude/*)"
+    ],
+    "deny": [
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(git push*main)",
+      "Bash(git push*master)",
+      "Bash(git reset --hard*)",
+      "Bash(git clean -f*)",
+      "Bash(git branch -D*)",
+      "Bash(rm -rf*)",
+      "Bash(sudo*)"
     ]
   }
 }
