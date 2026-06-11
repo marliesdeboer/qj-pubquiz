@@ -1,52 +1,112 @@
 .distribution {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: clamp(10px, 1.4vw, 16px);
 }
+
 .dist-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: clamp(12px, 1.6vw, 20px);
+  animation: phase-in 0.45s ease both;
+  transition: opacity 0.45s ease;
 }
-.dist-label {
-  font-size: 0.7rem;
-  font-weight: 700;
+
+/* Compacter zodra het antwoord onthuld is — maakt ruimte voor so-what + media */
+.distribution.revealed { gap: clamp(8px, 1vw, 12px); }
+.distribution.revealed .dist-letter {
+  min-width: clamp(32px, 3.2vw, 42px);
+  height: clamp(32px, 3.2vw, 42px);
+  font-size: clamp(0.95rem, 1.4vw, 1.25rem);
+}
+.distribution.revealed .dist-option-text { font-size: clamp(0.85rem, 1.3vw, 1.1rem); }
+
+.dist-letter {
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 1.9vw, 1.7rem);
+  font-weight: 800;
   color: var(--color-text-muted);
-  min-width: 22px;
-  text-align: center;
-}
-.dist-label.correct { color: var(--color-correct); }
-.dist-bar-track {
-  flex: 1;
-  height: 24px;
-  background: rgba(128,128,128,0.1);
-  border-radius: 4px;
-  overflow: hidden;
-}
-.dist-bar-fill {
-  height: 100%;
-  background: var(--color-accent);
-  border-radius: 4px;
+  min-width: clamp(40px, 4.5vw, 56px);
+  height: clamp(40px, 4.5vw, 56px);
   display: flex;
   align-items: center;
-  padding-left: 8px;
-  transition: width 0.4s ease;
+  justify-content: center;
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: all 0.4s ease;
+}
+
+.dist-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   min-width: 0;
 }
-.dist-bar-fill.correct { background: var(--color-correct); }
-.dist-bar-fill.incorrect { background: var(--color-incorrect); opacity: 0.5; }
-.dist-count {
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: rgba(255,255,255,0.9);
-  white-space: nowrap;
+
+.dist-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
 }
+
 .dist-option-text {
-  font-size: 0.7rem;
-  color: var(--color-text-muted);
-  min-width: 100px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: clamp(0.95rem, 1.6vw, 1.3rem);
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.25;
 }
-.dist-option-text.correct { color: var(--color-correct); font-weight: 600; }
+
+.dist-count {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 1.7vw, 1.45rem);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.dist-bar-track {
+  height: clamp(8px, 1.1vw, 12px);
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.dist-bar-fill {
+  height: 100%;
+  background: rgba(var(--color-accent-rgb), 0.65);
+  border-radius: 9999px;
+  transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1), background 0.4s ease;
+}
+
+/* ── Reveal-states ── */
+.dist-row.correct .dist-letter {
+  background: var(--color-correct);
+  border-color: var(--color-correct);
+  color: #08110B;
+  box-shadow: 0 0 32px rgba(74, 222, 128, 0.45);
+  animation: pop-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.dist-row.correct .dist-option-text { color: var(--color-correct); font-weight: 700; }
+.dist-row.correct .dist-count { color: var(--color-correct); }
+.dist-row.correct .dist-bar-fill {
+  background: var(--color-correct);
+  box-shadow: 0 0 20px rgba(74, 222, 128, 0.4);
+}
+
+.dist-row.incorrect { opacity: 0.38; }
+
+/* Poll: populairste optie krijgt het accent (geen goed/fout) */
+.dist-row.poll-top .dist-letter {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-bg);
+  box-shadow: 0 0 28px rgba(var(--color-accent-rgb), 0.45);
+}
+.dist-row.poll-top .dist-option-text { color: var(--color-accent); font-weight: 700; }
+.dist-row.poll-top .dist-bar-fill {
+  background: var(--color-accent);
+  box-shadow: 0 0 20px rgba(var(--color-accent-rgb), 0.4);
+}

@@ -1,13 +1,76 @@
-.leaderboard { display: flex; flex-direction: column; gap: 4px; }
+.leaderboard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
 .lb-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--color-border);
-  font-size: 0.8rem;
+  gap: 16px;
+  padding: 12px 20px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  animation: phase-in 0.45s ease both;
 }
-.lb-row:last-child { border-bottom: none; }
-.lb-rank { color: var(--color-text-muted); min-width: 18px; font-weight: 700; font-size: 0.7rem; }
-.lb-name { flex: 1; color: var(--color-text-muted); }
-.lb-score { font-weight: 700; color: var(--color-text); }
+
+.lb-rank {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--color-text-dim);
+  min-width: 28px;
+  font-variant-numeric: tabular-nums;
+}
+.lb-name {
+  flex: 1;
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+}
+.lb-score {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+.lb-score small {
+  font-size: 0.65em;
+  color: var(--color-text-dim);
+  margin-left: 3px;
+}
+
+/* ── Podiumformaat (host-scherm) ── */
+.leaderboard.stage {
+  max-width: 720px;
+  gap: 10px;
+}
+.leaderboard.stage .lb-row {
+  padding: clamp(12px, 1.6vw, 20px) clamp(20px, 2.4vw, 32px);
+  border-radius: 14px;
+}
+.leaderboard.stage .lb-rank  { font-size: clamp(1.1rem, 1.8vw, 1.5rem); min-width: 40px; }
+.leaderboard.stage .lb-name  { font-size: clamp(1.05rem, 1.8vw, 1.5rem); }
+.leaderboard.stage .lb-score { font-size: clamp(1.15rem, 2vw, 1.7rem); }
+
+/* ── Podium top 3 (eindstand) ── */
+.lb-row.podium-1 {
+  border-color: rgba(250, 204, 21, 0.55);
+  background: rgba(250, 204, 21, 0.08);
+  box-shadow: 0 0 36px rgba(250, 204, 21, 0.12);
+}
+.lb-row.podium-1 .lb-rank, .lb-row.podium-1 .lb-score { color: #FACC15; }
+.lb-row.podium-2 {
+  border-color: rgba(203, 213, 225, 0.45);
+  background: rgba(203, 213, 225, 0.07);
+}
+.lb-row.podium-2 .lb-rank, .lb-row.podium-2 .lb-score { color: #CBD5E1; }
+.lb-row.podium-3 {
+  border-color: rgba(217, 119, 6, 0.45);
+  background: rgba(217, 119, 6, 0.07);
+}
+.lb-row.podium-3 .lb-rank, .lb-row.podium-3 .lb-score { color: #D97706; }

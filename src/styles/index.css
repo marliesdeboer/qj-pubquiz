@@ -12,7 +12,83 @@ html, body, #root {
 
 body {
   font-family: var(--font-body);
-  background: var(--color-bg);
+  background: #0B0C10;
   color: var(--color-text);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button { font: inherit; }
+
+/* ── Theme wrapper: donkere basis + merk-glow + signatuurdecoratie ── */
+.theme-root {
+  min-height: 100vh;
+  background: var(--color-bg);
+  position: relative;
+  transition: background 0.6s ease;
+}
+.theme-root::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: var(--color-bg-glow);
+  pointer-events: none;
+  z-index: 0;
+}
+/* dunne merk-lijn bovenaan — rood→blauw in neutrale rondes, merkkleur in 3/4 */
+.theme-root::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--topline);
+  pointer-events: none;
+  z-index: 101;
+}
+.theme-root > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Corner sparkles (signatuur) ── */
+.theme-root .sparkles::before,
+.theme-root .sparkles::after {
+  content: '✦';
+  position: fixed;
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  pointer-events: none;
+  z-index: 99;
+  line-height: 1;
+  animation: sparkle-breathe 4s ease-in-out infinite;
+}
+.theme-root .sparkles::before {
+  top: 20px; left: 22px;
+  color: var(--sparkle-1);
+}
+.theme-root .sparkles::after {
+  bottom: 20px; right: 22px;
+  color: var(--sparkle-2);
+  animation-delay: 2s;
+}
+@keyframes sparkle-breathe {
+  0%, 100% { opacity: 0.5; transform: scale(1) rotate(0deg); }
+  50%      { opacity: 1;   transform: scale(1.15) rotate(20deg); }
+}
+
+/* ── Gedeelde fase-overgang ── */
+@keyframes phase-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pop-in {
+  0%   { opacity: 0; transform: scale(0.92); }
+  70%  { opacity: 1; transform: scale(1.02); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

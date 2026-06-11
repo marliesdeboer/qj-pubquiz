@@ -1,68 +1,124 @@
-/* ── Base theme (Rounds 1 & 2) ─────────────────────────── */
-[data-theme="base"] {
-  --color-bg:           #0A0A0F;
-  --color-surface:      #111118;
-  --color-border:       #1e1e2e;
-  --color-text:         #E8E8E8;
-  --color-text-muted:   #555555;
-  --color-accent:       #E8E8E8;
-  --color-accent-rgb:   232, 232, 232;
-  --color-correct:      #4ade80;
-  --color-incorrect:    #e84545;
-  --color-timer-urgent: #e84545;
-  --color-btn-bg:       #111118;
-  --color-btn-border:   #2e2e3e;
-  --color-btn-text:     #E8E8E8;
-  --color-btn-sel-bg:   #1a1a2a;
-  --color-btn-sel-border: #E8E8E8;
-  --color-btn-sel-text: #E8E8E8;
+/* ════════════════════════════════════════════════════════════
+   Q&J — thematisering
+   Drie thema's op één donkere premium basis:
+   - neutral : rondes 1 & 2 (externe blik) — near-black, Q/Joe subtiel aanwezig
+   - qmusic  : ronde 3 — het échte Qmusic-merk (Q-rood signatuur)
+   - joe     : ronde 4 — het échte Joe-merk (diep blauw + warm roze)
+   ════════════════════════════════════════════════════════════ */
+
+:root {
+  --brand-q:    #E8201E;
+  --brand-joe:  #2B72D4;
+  --brand-joe-pink: #FF4D73;
+}
+
+/* ── Neutral (rondes 1 & 2) ────────────────────────────────── */
+[data-theme="neutral"] {
+  --color-bg:           #0B0C10;
+  --color-bg-glow:
+    radial-gradient(ellipse 60% 45% at 12% -8%, rgba(232, 32, 30, 0.10), transparent 70%),
+    radial-gradient(ellipse 60% 45% at 88% -8%, rgba(43, 114, 212, 0.12), transparent 70%);
+  --color-surface:      rgba(255, 255, 255, 0.045);
+  --color-surface-strong: rgba(255, 255, 255, 0.08);
+  --color-border:       rgba(255, 255, 255, 0.10);
+  --color-border-strong: rgba(255, 255, 255, 0.22);
+  --color-text:         #F2F0EB;
+  --color-text-muted:   rgba(242, 240, 235, 0.55);
+  --color-text-dim:     rgba(242, 240, 235, 0.32);
+  --color-accent:       #F2F0EB;
+  --color-accent-rgb:   242, 240, 235;
+  --color-accent-2:     #5B8DEF;
+  --color-correct:      #4ADE80;
+  --color-incorrect:    #F87171;
+  --color-timer-urgent: #F87171;
+  --color-btn-bg:       rgba(255, 255, 255, 0.04);
+  --color-btn-border:   rgba(255, 255, 255, 0.22);
+  --color-btn-text:     #F2F0EB;
+  --color-btn-sel-bg:   #F2F0EB;
+  --color-btn-sel-border: #F2F0EB;
+  --color-btn-sel-text: #0B0C10;
   --font-display:       'Bebas Neue', sans-serif;
-  --font-body:          'DM Sans', sans-serif;
-  --timer-bar-color:    #E8E8E8;
+  --font-body:          'Barlow', sans-serif;
+  --font-display-spacing: 2px;
+  --display-transform:  uppercase;
+  --timer-bar-color:    rgba(242, 240, 235, 0.9);
+  --chart-accent:       #5B8DEF;
+  --chart-muted:        rgba(255, 255, 255, 0.16);
+  --sparkle-1:          rgba(232, 32, 30, 0.4);
+  --sparkle-2:          rgba(43, 114, 212, 0.45);
+  --topline:            linear-gradient(90deg, var(--brand-q), var(--brand-joe));
 }
 
-/* ── Qmusic theme (Round 3) ────────────────────────────── */
+/* ── Qmusic (ronde 3) ──────────────────────────────────────── */
 [data-theme="qmusic"] {
-  --color-bg:           #ffffff;
-  --color-surface:      #ffffff;
-  --color-border:       #e8e8e8;
-  --color-text:         #111111;
-  --color-text-muted:   #aaaaaa;
-  --color-accent:       #E8201E;
-  --color-accent-rgb:   232, 32, 30;
-  --color-correct:      #2bb04a;
-  --color-incorrect:    #cc2020;
-  --color-timer-urgent: #b01010;
-  --color-btn-bg:       #ffffff;
-  --color-btn-border:   #e8e8e8;
-  --color-btn-text:     #111111;
-  --color-btn-sel-bg:   #111111;
-  --color-btn-sel-border: #111111;
-  --color-btn-sel-text: #ffffff;
-  --font-display:       'Montserrat', sans-serif;
-  --font-body:          'DM Sans', sans-serif;
-  --timer-bar-color:    #E8201E;
+  --color-bg:           #120708;
+  --color-bg-glow:
+    radial-gradient(ellipse 75% 60% at 50% -15%, rgba(232, 32, 30, 0.32), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 85% 110%, rgba(232, 32, 30, 0.14), transparent 70%);
+  --color-surface:      rgba(255, 255, 255, 0.05);
+  --color-surface-strong: rgba(232, 32, 30, 0.14);
+  --color-border:       rgba(255, 255, 255, 0.11);
+  --color-border-strong: rgba(255, 96, 92, 0.45);
+  --color-text:         #FFF6F4;
+  --color-text-muted:   rgba(255, 246, 244, 0.55);
+  --color-text-dim:     rgba(255, 246, 244, 0.32);
+  --color-accent:       #FF3B38;
+  --color-accent-rgb:   255, 59, 56;
+  --color-accent-2:     #FFFFFF;
+  --color-correct:      #4ADE80;
+  --color-incorrect:    rgba(255, 255, 255, 0.30);
+  --color-timer-urgent: #FF3B38;
+  --color-btn-bg:       rgba(255, 255, 255, 0.045);
+  --color-btn-border:   rgba(255, 255, 255, 0.25);
+  --color-btn-text:     #FFF6F4;
+  --color-btn-sel-bg:   #E8201E;
+  --color-btn-sel-border: #FF5A57;
+  --color-btn-sel-text: #FFFFFF;
+  --font-display:       'Anton', 'Barlow Condensed', sans-serif;
+  --font-body:          'Barlow', sans-serif;
+  --font-display-spacing: 1.5px;
+  --display-transform:  uppercase;
+  --timer-bar-color:    #FF3B38;
+  --chart-accent:       #FF3B38;
+  --chart-muted:        rgba(255, 255, 255, 0.16);
+  --sparkle-1:          rgba(255, 59, 56, 0.6);
+  --sparkle-2:          rgba(255, 255, 255, 0.4);
+  --topline:            linear-gradient(90deg, #E8201E, #FF5A57);
 }
 
-/* ── Joe theme (Round 4) ───────────────────────────────── */
+/* ── Joe (ronde 4) ─────────────────────────────────────────── */
 [data-theme="joe"] {
-  --color-bg:           #2B72D4;
-  --color-surface:      #ffffff;
-  --color-border:       rgba(255,255,255,0.15);
-  --color-text:         #ffffff;
-  --color-text-muted:   rgba(255,255,255,0.5);
-  --color-accent:       #E8365D;
-  --color-accent-rgb:   232, 54, 93;
-  --color-correct:      #4ade80;
-  --color-incorrect:    #ff6b6b;
-  --color-timer-urgent: #E8365D;
-  --color-btn-bg:       #ffffff;
-  --color-btn-border:   rgba(255,255,255,0.2);
-  --color-btn-text:     #2B72D4;
+  --color-bg:           #070D1E;
+  --color-bg-glow:
+    radial-gradient(ellipse 75% 60% at 50% -15%, rgba(43, 114, 212, 0.34), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 12% 112%, rgba(255, 77, 115, 0.12), transparent 70%);
+  --color-surface:      rgba(255, 255, 255, 0.05);
+  --color-surface-strong: rgba(43, 114, 212, 0.16);
+  --color-border:       rgba(255, 255, 255, 0.11);
+  --color-border-strong: rgba(109, 163, 235, 0.45);
+  --color-text:         #F4F8FF;
+  --color-text-muted:   rgba(244, 248, 255, 0.55);
+  --color-text-dim:     rgba(244, 248, 255, 0.32);
+  --color-accent:       #6DA3EB;
+  --color-accent-rgb:   109, 163, 235;
+  --color-accent-2:     #FF4D73;
+  --color-correct:      #4ADE80;
+  --color-incorrect:    rgba(255, 255, 255, 0.30);
+  --color-timer-urgent: #FF4D73;
+  --color-btn-bg:       rgba(255, 255, 255, 0.045);
+  --color-btn-border:   rgba(255, 255, 255, 0.25);
+  --color-btn-text:     #F4F8FF;
   --color-btn-sel-bg:   #2B72D4;
-  --color-btn-sel-border: #ffffff;
-  --color-btn-sel-text: #ffffff;
+  --color-btn-sel-border: #6DA3EB;
+  --color-btn-sel-text: #FFFFFF;
   --font-display:       'Nunito', sans-serif;
   --font-body:          'Nunito', sans-serif;
-  --timer-bar-color:    #ffffff;
+  --font-display-spacing: 0.5px;
+  --display-transform:  none;
+  --timer-bar-color:    #6DA3EB;
+  --chart-accent:       #6DA3EB;
+  --chart-muted:        rgba(255, 255, 255, 0.16);
+  --sparkle-1:          rgba(255, 77, 115, 0.55);
+  --sparkle-2:          rgba(109, 163, 235, 0.55);
+  --topline:            linear-gradient(90deg, #2B72D4, #FF4D73);
 }

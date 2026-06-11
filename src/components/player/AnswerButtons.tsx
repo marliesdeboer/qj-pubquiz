@@ -19,8 +19,8 @@ export function AnswerButtons({ options, selectedIndex, correctIndex, phase, onS
       return selectedIndex === i ? 'selected' : 'locked'
     }
     // reveal phase
-    if (correctIndex !== null && correctIndex !== -1 && i === correctIndex) return 'correct'
-    if (i === selectedIndex && correctIndex !== -1) return 'incorrect'
+    if (correctIndex !== null && i === correctIndex) return 'correct'
+    if (i === selectedIndex && correctIndex !== null) return 'incorrect'
     return 'locked'
   }
 
@@ -32,7 +32,7 @@ export function AnswerButtons({ options, selectedIndex, correctIndex, phase, onS
           <button
             key={i}
             className={`answer-btn ${state}`}
-            disabled={phase === 'reveal' || selectedIndex !== null}
+            disabled={phase === 'reveal'}
             onClick={() => onSelect(i)}
           >
             <span className="answer-opt">{LABELS[i]}</span>

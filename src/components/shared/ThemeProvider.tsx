@@ -11,7 +11,8 @@ export function ThemeProvider({ gameState, children }: Props) {
   const theme = getThemeForRound(round)
 
   return (
-    <div data-theme={theme} style={{ minHeight: '100vh' }}>
+    <div data-theme={theme} className="theme-root">
+      <div className="sparkles" aria-hidden="true" />
       {children}
     </div>
   )

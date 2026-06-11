@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { GameState, ClientMessage } from '../../types/game'
-import { QUESTIONS, getTimerForRound } from '../../data/questions'
+import { QUESTIONS, getTimerForRound, getThemeForRound } from '../../data/questions'
 import { Timer } from '../shared/Timer'
 import { AnswerButtons } from './AnswerButtons'
 import { Lobby } from './Lobby'
@@ -13,16 +13,25 @@ type Props = {
   send: (msg: ClientMessage) => void
 }
 
+function PlayerBrand({ round }: { round: number }) {
+  const theme = getThemeForRound(round)
+  if (theme === 'qmusic') return <span className="player-brand brand-q">QMUSIC</span>
+  if (theme === 'joe') return <span className="player-brand brand-joe">joe<span>.</span></span>
+  return (
+    <span className="player-brand brand-duo">
+      <span className="bq">Q</span><span className="bamp">&</span><span className="bj">JOE</span>
+    </span>
+  )
+}
+
 export function PlayerView({ gameState, teamId, send }: Props) {
   const { phase, currentQuestion, currentRound, teams, answers } = gameState
   const myTeam = teams.find(t => t.id === teamId)
-  const myAnswer = answers.find(a => a.teamId === teamId)
   const question = QUESTIONS[currentQuestion]
   const timerDuration = getTimerForRound(currentRound)
 
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
 
-  // Reset selection when question changes
   const [lastSeenQuestion, setLastSeenQuestion] = useState(currentQuestion)
   if (currentQuestion !== lastSeenQuestion) {
     setSelectedIndex(null)
@@ -30,7 +39,7 @@ export function PlayerView({ gameState, teamId, send }: Props) {
   }
 
   function handleSelect(index: number) {
-    if (selectedIndex !== null) return
+    if (phase === 'reveal') return
     setSelectedIndex(index)
     send({
       type: 'SUBMIT_ANSWER',
@@ -51,13 +60,14 @@ export function PlayerView({ gameState, teamId, send }: Props) {
     const sorted = [...teams].sort((a, b) => b.score - a.score)
     return (
       <div className="player-leaderboard">
-        <div className="player-lb-title">{`STAND NA RONDE ${currentRound - 1}`}</div>
+        <div className="player-lb-kicker">Tussenstand</div>
+        <div className="player-lb-title">Na ronde {currentRound}</div>
         <div className="player-lb-list">
           {sorted.map((team, i) => (
-            <div key={team.id} className={`player-lb-row ${team.id === teamId ? 'player-lb-me' : ''}`}>
+            <div key={team.id} className={`player-lb-row ${team.id === teamId ? 'player-lb-me' : ''}`} style={{ animationDelay: `${i * 70}ms` }}>
               <span className="player-lb-rank">{i + 1}</span>
               <span className="player-lb-name">{team.name}{team.id === teamId ? ' (jij)' : ''}</span>
-              <span className="player-lb-score">{team.score} pts</span>
+              <span className="player-lb-score">{team.score} pt</span>
             </div>
           ))}
         </div>
@@ -65,58 +75,52 @@ export function PlayerView({ gameState, teamId, send }: Props) {
     )
   }
 
-  const isLocked = myAnswer !== undefined || phase === 'reveal'
-  const correctIndex = phase === 'reveal' ? question.correctIndex : null
-  const brandLabel = currentRound === 3 ? 'QMUSIC' : currentRound === 4 ? 'joe.' : 'Q&J QUIZ'
+  const isPoll = question.type === 'poll'
+  const answerIndex = phase === 'reveal' && !isPoll ? question.answerIndex : null
+  const isCorrect = phase === 'reveal' && !isPoll && selectedIndex !== null && selectedIndex === question.answerIndex
+  const hasVoted = answers.some(a => a.teamId === teamId)
 
   return (
-    <div className="player-view">
+    <div className="player-view" key={currentQuestion}>
       <div className="player-question-area">
         <div className="player-header">
-          <span className="player-brand">{brandLabel}</span>
+          <PlayerBrand round={currentRound} />
           <span className="player-team-name">{myTeam?.name ?? ''}</span>
         </div>
         <div className="player-q-meta">
-          <span className="player-q-label">Vraag {currentQuestion + 1} van 20</span>
+          <span className="player-q-label">
+            Vraag {currentQuestion + 1}/20
+            {isPoll && <span className="player-poll-badge">Poll</span>}
+          </span>
           {phase === 'question' && (
-            <Timer
-              key={currentQuestion}
-              duration={timerDuration}
-              running={phase === 'question' && !isLocked}
-            />
+            <Timer key={currentQuestion} duration={timerDuration} running={true} />
           )}
         </div>
-        <div className="player-question-text">{question.text}</div>
+        <div className="player-question-text">{question.question}</div>
       </div>
 
       <div className="player-answers-area">
-        {phase === 'question' && isLocked ? (
-          <div className="player-locked">
-            <div className="player-locked-icon">⏳</div>
-            <div>Antwoord verstuurd!</div>
-            <div style={{ fontSize: '0.75rem' }}>Wacht op de host...</div>
+        <AnswerButtons
+          options={question.options}
+          selectedIndex={selectedIndex}
+          correctIndex={answerIndex}
+          phase={phase === 'reveal' ? 'reveal' : 'question'}
+          onSelect={handleSelect}
+        />
+        {phase === 'question' && hasVoted && (
+          <div className="player-locked-hint">✓ Antwoord verstuurd — je kunt nog wisselen</div>
+        )}
+        {phase === 'reveal' && !isPoll && selectedIndex !== null && (
+          <div className={`player-reveal-overlay ${isCorrect ? 'correct' : 'incorrect'}`}>
+            <div className="player-reveal-badge">{isCorrect ? 'Goed!' : 'Fout'}</div>
+            <div className="player-reveal-sub">{isCorrect ? '+100 punten' : 'Kijk naar het scherm'}</div>
+            {myTeam && <div className="player-reveal-score">{myTeam.score} pt totaal</div>}
           </div>
-        ) : (
-          <>
-            <AnswerButtons
-              options={question.options}
-              selectedIndex={selectedIndex}
-              correctIndex={correctIndex}
-              phase={phase === 'reveal' ? 'reveal' : 'question'}
-              onSelect={handleSelect}
-            />
-            {phase === 'reveal' && (
-              <>
-                <div className="player-explanation">{question.explanation}</div>
-                {myTeam && (
-                  <div className="player-score">
-                    <span>Teamscore</span>
-                    <span className="player-score-pts">{myTeam.score} pts</span>
-                  </div>
-                )}
-              </>
-            )}
-          </>
+        )}
+        {phase === 'reveal' && isPoll && (
+          <div className="player-poll-thanks">
+            ✦ Stem geteld — de verdeling staat op het grote scherm
+          </div>
         )}
       </div>
     </div>

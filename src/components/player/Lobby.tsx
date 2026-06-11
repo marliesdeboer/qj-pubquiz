@@ -23,7 +23,10 @@ export function Lobby({ gameState, teamId, send }: Props) {
 
   return (
     <div className="lobby">
-      <div className="lobby-title">Q&J QUIZ</div>
+      <div className="lobby-kicker">Leiderschapssessie · Van radio naar content</div>
+      <div className="lobby-title">
+        <span className="tq">Q</span> & <span className="tj">Joe</span> Quiz
+      </div>
       <div className="lobby-sub">Voer je teamnaam in om mee te doen</div>
 
       {!joined ? (

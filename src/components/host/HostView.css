@@ -1,170 +1,351 @@
-.host-pin-gate {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  background: #0A0A0F;
-  color: #E8E8E8;
-}
-.host-pin-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 2px; }
-.host-pin-input {
-  padding: 12px 16px;
-  background: #111118;
-  border: 1.5px solid #2e2e3e;
-  border-radius: 8px;
-  color: #E8E8E8;
-  font-size: 1.2rem;
-  text-align: center;
-  letter-spacing: 4px;
-  width: 200px;
-  outline: none;
-}
-.host-pin-input.error { border-color: #e84545; }
-.host-pin-btn {
-  padding: 12px 24px;
-  background: #E8E8E8;
-  color: #0A0A0F;
-  border: none;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 0.9rem;
-  cursor: pointer;
-}
+/* ════════════════════════════════════════════════════════════
+   HostView — het podiumscherm. Wordt op groot scherm getoond
+   voor de hele zaal; alles moet van afstand leesbaar zijn.
+   ════════════════════════════════════════════════════════════ */
 
-/* Host layout */
 .host-view {
   min-height: 100vh;
-  background: #0A0A0F;
-  color: #E8E8E8;
-  font-family: 'DM Sans', sans-serif;
   display: flex;
   flex-direction: column;
+  color: var(--color-text);
+  font-family: var(--font-body);
 }
+
+.host-center {
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: var(--color-text-muted);
+}
+
+/* ── Topbar ── */
 .host-topbar {
-  background: #111118;
-  padding: 10px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #1e1e2e;
+  padding: 18px clamp(20px, 3vw, 48px);
+  border-bottom: 1px solid var(--color-border);
   flex-shrink: 0;
 }
-.host-topbar-title { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 2px; }
-.host-topbar-meta { font-size: 0.7rem; color: #555; }
-.host-reset-btn {
-  font-size: 0.65rem;
-  color: #e84545;
-  border: 1px solid rgba(232,69,69,0.3);
-  border-radius: 4px;
-  padding: 4px 10px;
-  background: transparent;
-  cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 600;
-  text-transform: uppercase;
+.host-brand {
+  font-size: 1.15rem;
+  letter-spacing: 3px;
+}
+.host-brand-duo { font-family: 'Bebas Neue', sans-serif; }
+.host-brand-duo .bq   { color: #FF3B38; }
+.host-brand-duo .bamp { color: var(--color-text-dim); margin: 0 6px; }
+.host-brand-duo .bj   { color: #6DA3EB; }
+.host-brand-q {
+  font-family: 'Anton', sans-serif;
+  color: #fff;
+  background: #E8201E;
+  padding: 4px 14px 3px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  box-shadow: 0 0 30px rgba(232, 32, 30, 0.4);
+}
+.host-brand-joe {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  color: #fff;
+  background: #2B72D4;
+  padding: 2px 16px 5px;
+  border-radius: 9999px;
+  font-size: 1.05rem;
   letter-spacing: 0.5px;
+  box-shadow: 0 0 30px rgba(43, 114, 212, 0.4);
+}
+.host-brand-joe span { color: #FF4D73; }
+.host-topbar-meta {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.host-topbar-teams {
+  font-size: 0.85rem;
+  color: var(--color-text-dim);
+  min-width: 80px;
+  text-align: right;
 }
 
-.host-main {
+/* ── Stage ── */
+.host-stage {
   flex: 1;
   display: flex;
-  overflow: hidden;
+  gap: clamp(24px, 3vw, 48px);
+  padding: clamp(24px, 3.5vw, 56px) clamp(24px, 4vw, 64px) 110px;
+  animation: phase-in 0.5s ease both;
+  overflow-y: auto;
+}
+.host-stage-center {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 22px;
 }
 
-/* Left: question + chart */
-.host-left {
+.host-kicker {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: clamp(0.9rem, 1.4vw, 1.15rem);
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.host-hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 9vw, 8rem);
+  font-weight: 900;
+  text-transform: var(--display-transform);
+  letter-spacing: var(--font-display-spacing);
+  line-height: 0.98;
+}
+.host-hero-smaller { font-size: clamp(2.8rem, 6vw, 5rem); }
+
+.host-lobby-status {
+  font-size: clamp(1rem, 1.6vw, 1.3rem);
+  color: var(--color-text-muted);
+}
+.host-lobby-teams {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  max-width: 900px;
+}
+.host-team-pill {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 9999px;
+  padding: 9px 22px;
+  font-size: clamp(0.9rem, 1.4vw, 1.15rem);
+  color: var(--color-text);
+  animation: pop-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ── Vraag-layout ── */
+.host-stage-q { align-items: stretch; }
+.host-q-col {
   flex: 1;
-  padding: 20px;
-  border-right: 1px solid #1e1e2e;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: clamp(16px, 2.2vw, 28px);
+  min-width: 0;
+  max-width: 1100px;
+  margin: 0 auto;
 }
-.host-q-header {
+.host-stage-q.with-media .host-q-col { margin: 0; max-width: none; flex: 11; }
+.host-media-col {
+  flex: 10;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  animation: pop-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both;
+}
+
+.host-q-meta {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  gap: 20px;
 }
-.host-q-label { font-size: 0.65rem; color: #555; text-transform: uppercase; letter-spacing: 1px; }
-.host-question-text {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #E8E8E8;
-  line-height: 1.45;
+.host-q-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: clamp(0.85rem, 1.3vw, 1.05rem);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
-.host-dist-label { font-size: 0.6rem; color: #555; text-transform: uppercase; letter-spacing: 1px; }
-.host-explanation {
-  background: #111118;
-  border: 1px solid #1e1e2e;
-  border-radius: 6px;
-  padding: 10px 14px;
-  font-size: 0.8rem;
-  color: #888;
-  line-height: 1.5;
+.host-poll-badge {
+  background: rgba(var(--color-accent-rgb), 0.14);
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-accent);
+  font-size: 0.72em;
+  letter-spacing: 2px;
+  padding: 4px 12px;
+  border-radius: 9999px;
 }
-.host-explanation strong { color: #aaa; }
 
-/* Right: controls */
-.host-right {
-  width: 180px;
-  padding: 20px 14px;
+.host-question-text {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3.6vw, 3.4rem);
+  font-weight: 800;
+  text-transform: var(--display-transform);
+  letter-spacing: var(--font-display-spacing);
+  line-height: 1.08;
+  transition: font-size 0.4s ease;
+}
+.host-question-text.compact {
+  font-size: clamp(1.2rem, 2vw, 1.8rem);
+  color: var(--color-text-muted);
+}
+
+.host-dist-block {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  flex-shrink: 0;
+  gap: 12px;
 }
-.host-section-label {
-  font-size: 0.55rem;
-  color: #444;
+.host-dist-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: clamp(0.8rem, 1.2vw, 1rem);
+  letter-spacing: 2.5px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  color: var(--color-text-dim);
 }
-.host-ctrl-btn {
-  width: 100%;
-  padding: 11px 10px;
-  border-radius: 6px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  font-family: 'DM Sans', sans-serif;
-  cursor: pointer;
-  text-align: center;
-}
-.host-ctrl-btn.primary { background: #E8E8E8; color: #0A0A0F; border: none; }
-.host-ctrl-btn.secondary { background: transparent; color: #E8E8E8; border: 1.5px solid #2e2e3e; }
-.host-ctrl-btn:disabled { background: transparent; color: #333; border: 1.5px solid #1a1a2a; cursor: default; }
-.host-divider { height: 1px; background: #1e1e2e; }
 
-/* Lobby state */
-.host-lobby {
-  flex: 1;
+/* ── So what-paneel (het eigenlijke product van elke vraag) ── */
+.host-sowhat {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-accent);
+  border-radius: 14px;
+  padding: clamp(16px, 2vw, 26px) clamp(18px, 2.4vw, 30px);
+  animation: phase-in 0.6s ease 0.45s both;
+  backdrop-filter: blur(8px);
+}
+.host-sowhat-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 8px;
+}
+.host-sowhat-text {
+  font-size: clamp(1rem, 1.6vw, 1.35rem);
+  line-height: 1.55;
+  color: var(--color-text);
+}
+.host-source {
+  margin-top: 12px;
+  font-size: clamp(0.68rem, 1vw, 0.8rem);
+  color: var(--color-text-dim);
+  line-height: 1.5;
+  word-break: break-all;
+}
+
+/* ── Media ── */
+.host-media-el {
+  max-width: 100%;
+  max-height: min(62vh, 640px);
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+}
+.host-audio-wrap {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 36px 32px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 20px;
-  padding: 40px;
+  gap: 16px;
+  text-align: center;
 }
-.host-lobby-title { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; letter-spacing: 3px; }
-.host-lobby-teams { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-.host-team-pill {
-  background: #111118;
-  border: 1px solid #2e2e3e;
-  border-radius: 20px;
-  padding: 6px 14px;
-  font-size: 0.85rem;
-  color: #aaa;
+.host-audio-icon {
+  font-size: 3rem;
+  color: var(--color-accent);
+  animation: sparkle-breathe 3s ease-in-out infinite;
 }
-.host-start-btn {
-  padding: 14px 32px;
-  background: #E8E8E8;
-  color: #0A0A0F;
-  border: none;
-  border-radius: 8px;
+.host-audio-desc {
   font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
+  color: var(--color-text-muted);
+  max-width: 380px;
+  line-height: 1.5;
 }
-.host-start-btn:disabled { opacity: 0.4; cursor: default; }
+.host-media-audio { width: 100%; max-width: 420px; }
+
+.host-media-missing {
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: 16px;
+  padding: 32px 28px;
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  text-align: center;
+}
+.host-media-missing-icon { display: block; font-size: 1.6rem; margin-bottom: 8px; }
+.host-media-missing code {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.85em;
+}
+.host-media-missing-desc { margin-top: 10px; font-style: italic; color: var(--color-text-dim); }
+
+/* ── Eindstand ── */
+.host-finished-note {
+  margin-top: 8px;
+  font-size: clamp(1rem, 1.6vw, 1.3rem);
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* ── Bedieningsbalk (discreet, onderin) ── */
+.host-controls {
+  position: fixed;
+  bottom: 22px;
+  right: 26px;
+  display: flex;
+  gap: 10px;
+  z-index: 50;
+}
+.host-ctrl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 26px;
+  border-radius: 9999px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+.host-ctrl-btn.primary {
+  background: var(--color-btn-sel-bg);
+  color: var(--color-btn-sel-text);
+  border: 1px solid var(--color-btn-sel-border);
+  box-shadow: 0 8px 32px rgba(var(--color-accent-rgb), 0.35);
+}
+.host-ctrl-btn.primary:hover:not(:disabled) { transform: scale(1.04); }
+.host-ctrl-btn.primary:active:not(:disabled) { transform: scale(0.98); }
+.host-ctrl-btn.primary:disabled { opacity: 0.35; cursor: default; box-shadow: none; }
+.host-ctrl-btn kbd {
+  font-family: inherit;
+  font-size: 0.7em;
+  letter-spacing: 1px;
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 6px;
+  padding: 2px 8px;
+  opacity: 0.75;
+}
+[data-theme="neutral"] .host-ctrl-btn.primary kbd { background: rgba(0, 0, 0, 0.12); }
+.host-ctrl-btn.ghost {
+  background: var(--color-surface);
+  color: var(--color-text-dim);
+  border: 1px solid var(--color-border);
+  padding: 13px 16px;
+}
+.host-ctrl-btn.ghost:hover { color: var(--color-text); border-color: var(--color-border-strong); }
+
+/* ── Responsief: media onder de vraag op smalle schermen ── */
+@media (max-width: 1100px) {
+  .host-stage-q { flex-direction: column; }
+  .host-stage-q.with-media .host-q-col { max-width: none; }
+}

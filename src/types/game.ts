@@ -24,14 +24,29 @@ export type GameState = {
   answers: Answer[]
 }
 
+export type ChartDataPoint = {
+  label: string
+  value: number
+  unit?: string
+}
+
+export type MediaContent =
+  | { type: 'chart'; chartType: 'bar' | 'donut'; title: string; data: ChartDataPoint[]; unit?: string; note?: string }
+  | { type: 'video'; description: string; sourceUrl: string; searchTerm: string }
+  | { type: 'image'; description: string; searchTerm: string }
+  | { type: 'audio'; description: string; searchTerm: string }
+  | { type: 'poll'; description: string }
+
 export type Question = {
-  id: number           // 1–20
+  id: string           // 'V1'–'V20'
   round: number        // 1–4
-  text: string
-  options: string[]    // 2 items for T/F, 4 items otherwise
-  correctIndex: number // 0-based; -1 = no correct (Q20 pure opinion)
+  type: 'quiz' | 'poll'
+  question: string
+  options: string[]
+  answerIndex: number | null  // null = poll (geen juist antwoord)
   explanation: string
-  isOpinion?: boolean  // Q15 and Q20
+  source: string
+  media: MediaContent
 }
 
 // Client → Server messages

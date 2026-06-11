@@ -1,0 +1,214 @@
+/* ════════════════════════════════════════════════════════════
+   ChartView — datavisualisatie op consultancy-niveau.
+   Eén accentkleur (rondethema) + grijstinten; geen regenboog.
+   ════════════════════════════════════════════════════════════ */
+
+.chart-wrap {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: clamp(18px, 2.5vw, 30px) clamp(20px, 2.8vw, 34px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 2vw, 22px);
+  backdrop-filter: blur(8px);
+}
+
+.chart-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(0.85rem, 1.3vw, 1.05rem);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+}
+
+.chart-unit {
+  font-size: 0.62em;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  margin-left: 2px;
+}
+
+/* ── Bar chart ─────────────────────────────────────────── */
+.chart-bars {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(12px, 1.8vw, 20px);
+}
+
+.chart-bar-row {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  animation: phase-in 0.5s ease both;
+}
+
+.chart-bar-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.chart-bar-label {
+  font-size: clamp(0.85rem, 1.4vw, 1.1rem);
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.chart-bar-value {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 2.2vw, 1.9rem);
+  letter-spacing: 0.5px;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.chart-bar-value.lead { color: var(--color-text); }
+
+.chart-bar-track {
+  height: clamp(12px, 1.6vw, 18px);
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.chart-bar-fill {
+  height: 100%;
+  background: var(--chart-muted);
+  border-radius: 9999px;
+  transition: width 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.chart-bar-fill.lead {
+  background: var(--chart-accent);
+  box-shadow: 0 0 24px rgba(var(--color-accent-rgb), 0.35);
+}
+.chart-bar-fill.negative { background: var(--color-incorrect); }
+
+/* ── Stat cards (gemixte eenheden / met toelichting) ───── */
+.chart-stat-cards {
+  display: flex;
+  gap: clamp(12px, 1.8vw, 20px);
+  flex-wrap: wrap;
+}
+
+.chart-stat-card {
+  flex: 1;
+  min-width: 150px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--chart-accent);
+  border-radius: 12px;
+  padding: clamp(14px, 2vw, 24px) clamp(16px, 2.2vw, 26px);
+  animation: pop-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.chart-stat-card.negative { border-left-color: var(--color-incorrect); }
+.chart-stat-card.positive { border-left-color: var(--color-correct); }
+
+.chart-stat-value {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3.5vw, 3.2rem);
+  line-height: 1.1;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+.chart-stat-card.negative .chart-stat-value { color: var(--color-incorrect); }
+.chart-stat-card.positive .chart-stat-value { color: var(--color-correct); }
+
+.chart-stat-label {
+  font-size: clamp(0.75rem, 1.2vw, 0.95rem);
+  color: var(--color-text-muted);
+  margin-top: 8px;
+  line-height: 1.4;
+}
+
+/* ── Donut chart ───────────────────────────────────────── */
+.chart-donut-wrap {
+  display: flex;
+  align-items: center;
+  gap: clamp(20px, 3vw, 40px);
+  flex-wrap: wrap;
+}
+
+.chart-donut-stage {
+  position: relative;
+  width: clamp(130px, 16vw, 200px);
+  height: clamp(130px, 16vw, 200px);
+  flex-shrink: 0;
+}
+
+.chart-donut-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+.chart-donut-svg circle {
+  transition: stroke-dasharray 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.chart-donut-svg:not(.entered) circle:not(:first-child) {
+  stroke-dasharray: 0 251.3;
+}
+
+.chart-donut-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3vw, 2.6rem);
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-donut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  min-width: 180px;
+}
+
+.chart-legend-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: clamp(0.85rem, 1.3vw, 1.05rem);
+  animation: phase-in 0.5s ease both;
+}
+
+.chart-legend-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.chart-legend-label {
+  flex: 1;
+  color: var(--color-text);
+}
+
+.chart-legend-value {
+  font-family: var(--font-display);
+  font-size: 1.15em;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Annotatie ─────────────────────────────────────────── */
+.chart-note {
+  font-size: clamp(0.78rem, 1.2vw, 0.95rem);
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  padding-top: 4px;
+  border-top: 1px solid var(--color-border);
+  animation: phase-in 0.6s ease 0.5s both;
+}
+.chart-note-mark {
+  color: var(--chart-accent);
+  font-weight: 700;
+  margin-right: 2px;
+}

@@ -3,6 +3,7 @@ import type { GameState, ClientMessage, ServerMessage } from '../src/types/game'
 import {
   QUESTIONS,
   POINTS_PER_CORRECT,
+  POLL_PARTICIPATION_POINTS,
   ROUND_END_INDICES,
 } from '../src/data/questions'
 
@@ -23,7 +24,7 @@ export default class QuizServer implements Party.Server {
     conn.send(JSON.stringify({ type: 'STATE_UPDATE', state: this.state } satisfies ServerMessage))
   }
 
-  onMessage(raw: string, sender: Party.Connection) {
+  onMessage(raw: string) {
     let msg: ClientMessage
     try {
       msg = JSON.parse(raw) as ClientMessage
@@ -47,11 +48,10 @@ export default class QuizServer implements Party.Server {
         if (this.state.phase !== 'question') return
         const teamExists = this.state.teams.some(t => t.id === msg.teamId)
         if (!teamExists) return
-        const alreadyAnswered = this.state.answers.some(a => a.teamId === msg.teamId)
-        if (alreadyAnswered) return
+        const updatedAnswers = this.state.answers.filter(a => a.teamId !== msg.teamId)
         this.state = {
           ...this.state,
-          answers: [...this.state.answers, { teamId: msg.teamId, answer: msg.answer }],
+          answers: [...updatedAnswers, { teamId: msg.teamId, answer: msg.answer }],
         }
         break
       }
@@ -87,12 +87,15 @@ export default class QuizServer implements Party.Server {
         if (this.state.phase !== 'question') return
         if (this.state.currentQuestion >= QUESTIONS.length) return
         const question = QUESTIONS[this.state.currentQuestion]
-        // Award points (not for pure opinion questions where correctIndex === -1)
         const updatedTeams = this.state.teams.map(team => {
           const teamAnswer = this.state.answers.find(a => a.teamId === team.id)
           if (!teamAnswer) return team
+          if (question.type === 'poll') {
+            // Poll: everyone who votes gets participation points
+            return { ...team, score: team.score + POLL_PARTICIPATION_POINTS }
+          }
           const answerIndex = question.options.indexOf(teamAnswer.answer)
-          const isCorrect = question.correctIndex !== -1 && answerIndex === question.correctIndex
+          const isCorrect = question.answerIndex !== null && answerIndex === question.answerIndex
           return isCorrect ? { ...team, score: team.score + POINTS_PER_CORRECT } : team
         })
         this.state = { ...this.state, phase: 'reveal', teams: updatedTeams }
