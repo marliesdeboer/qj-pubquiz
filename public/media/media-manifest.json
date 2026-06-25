@@ -1,0 +1,62 @@
+{
+  "_note": "Alle mediabestanden aangeleverd op 11 juni 2026. Bestanden worden lokaal geserveerd als /media/<id>.<ext>; bij een ontbrekend bestand toont de host-view een nette fallback met instructie.",
+  "files": [
+    {
+      "id": "V3",
+      "file": "V3.mp4",
+      "type": "video",
+      "description": "Nieuwsclip over de CADA 'Thy'-onthulling — 9 News Australia: 'AI radio announcer revealed' (3:26)",
+      "sourceUrl": "https://www.youtube.com/watch?v=kTvlPzBfRD0",
+      "status": "aangeleverd"
+    },
+    {
+      "id": "V6",
+      "file": "V6.png",
+      "type": "image",
+      "description": "Officiële Rayo-campagnebeeld: 'One app for the music, shows & radio you love' met alle Bauer-zenders",
+      "sourceUrl": "https://www.bauermedia.co.uk/wordpress/wp-content/uploads/2024/06/Rayo-asset.jpg",
+      "status": "aangeleverd"
+    },
+    {
+      "id": "V8",
+      "file": "V8.png",
+      "type": "image",
+      "description": "Het Goalhanger-portfolio: The Rest Is History/Politics/US/Entertainment, Empire, Sherlock & Co. e.a. (was: O2-zaalvideo — geen publiek beschikbaar arena-beeldmateriaal gevonden, portfolio onderbouwt de '14 shows'-claim direct)",
+      "sourceUrl": "https://i.podnews.network/r/a/840/goalhanger-club2601.png",
+      "status": "aangeleverd"
+    },
+    {
+      "id": "V12",
+      "file": "V12.mp4",
+      "type": "video",
+      "description": "Officiële aftermovie Foute Party 2023 (Qmusic Nederland, 3:11) — sfeerbeeld menigte",
+      "sourceUrl": "https://www.youtube.com/watch?v=qpaVxstfczo",
+      "status": "aangeleverd"
+    },
+    {
+      "id": "V16",
+      "file": "V16.png",
+      "type": "image",
+      "description": "Gestileerde Joe-playlistweergave (eigen ontwerp in Joe-huisstijl): Queen, ABBA, Prince, Toto, Whitney — alles van vóór 2000",
+      "sourceUrl": "eigen ontwerp (geen rechtenkwestie)",
+      "status": "aangeleverd"
+    },
+    {
+      "id": "V18",
+      "file": "V18.mp4",
+      "type": "video",
+      "description": "Joe live: Paul de Leeuw zingt zijn nummer 1-hit met JOE-luisteraars (officieel JOE Nederland-kanaal, 3:01)",
+      "sourceUrl": "https://www.youtube.com/watch?v=Wt7DrMIYc6s",
+      "status": "aangeleverd"
+    },
+    {
+      "id": "V19",
+      "file": "V19.mp3",
+      "type": "audio",
+      "description": "Audiofragment 'Coen en Sander 1 jaar te horen bij JOE!' (officieel JOE Nederland-kanaal, 1:30)",
+      "sourceUrl": "https://www.youtube.com/watch?v=7e6u2NxgRz0",
+      "status": "aangeleverd"
+    }
+  ],
+  "_rechten": "Video/audio afkomstig van officiële kanalen van de betrokken merken (9News, Qmusic NL, JOE NL) en officiële persbeelden (Bauer, Podnews/Goalhanger); uitsluitend voor eenmalig intern gebruik tijdens de DPG-leiderschapssessie."
+}
