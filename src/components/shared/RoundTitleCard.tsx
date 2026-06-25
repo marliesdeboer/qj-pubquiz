@@ -12,7 +12,7 @@ export function RoundTitleCard({ round, onDone, isHost = false }: Props) {
   const music = ROUND_MUSIC[round]
   const [musicState, setMusicState] = useState<'idle' | 'playing'>('idle')
   const audioRef = useRef<HTMLAudioElement | null>(null)
-  const stopTimerRef = useRef<ReturnType<typeof setTimeout>>()
+  const stopTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   // Non-host clients auto-close after 3.5s. Host waits for play button (or click to skip).
   useEffect(() => {
