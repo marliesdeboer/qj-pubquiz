@@ -82,6 +82,36 @@ export default class QuizServer implements Party.Server {
         break
       }
 
+      case 'JUMP_TO_QUESTION': {
+        if (!msg.isHost) return
+        const idx = msg.questionIndex
+        if (idx < 0 || idx >= QUESTIONS.length) return
+        this.state = {
+          ...this.state,
+          phase: 'question',
+          currentQuestion: idx,
+          currentRound: QUESTIONS[idx].round,
+          answers: [],
+        }
+        break
+      }
+
+      case 'PREV_QUESTION': {
+        if (!msg.isHost) return
+        if (this.state.phase !== 'question' && this.state.phase !== 'reveal') return
+        const prevIdx = this.state.currentQuestion - 1
+        if (prevIdx < 0) return
+        const prevRound = QUESTIONS[prevIdx].round
+        this.state = {
+          ...this.state,
+          phase: 'question',
+          currentQuestion: prevIdx,
+          currentRound: prevRound,
+          answers: [],
+        }
+        break
+      }
+
       case 'REVEAL': {
         if (!msg.isHost) return
         if (this.state.phase !== 'question') return

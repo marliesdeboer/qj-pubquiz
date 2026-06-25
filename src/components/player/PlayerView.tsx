@@ -113,7 +113,7 @@ export function PlayerView({ gameState, teamId, send }: Props) {
         {phase === 'reveal' && !isPoll && selectedIndex !== null && (
           <div className={`player-reveal-overlay ${isCorrect ? 'correct' : 'incorrect'}`}>
             <div className="player-reveal-badge">{isCorrect ? 'Goed!' : 'Fout'}</div>
-            <div className="player-reveal-sub">{isCorrect ? '+100 punten' : 'Kijk naar het scherm'}</div>
+            {isCorrect && <div className="player-reveal-sub">+100 punten</div>}
             {myTeam && <div className="player-reveal-score">{myTeam.score} pt totaal</div>}
           </div>
         )}

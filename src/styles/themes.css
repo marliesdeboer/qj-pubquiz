@@ -12,7 +12,8 @@
   --brand-joe-pink: #FF4D73;
 }
 
-/* ── Neutral (rondes 1 & 2) ────────────────────────────────── */
+/* ── Neutral (rondes 1 & 2) — ook de :root-default ─────────── */
+:root,
 [data-theme="neutral"] {
   --color-bg:           #0B0C10;
   --color-bg-glow:

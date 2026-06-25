@@ -24,6 +24,8 @@ button { font: inherit; }
 .theme-root {
   min-height: 100vh;
   background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
   position: relative;
   transition: background 0.6s ease;
 }

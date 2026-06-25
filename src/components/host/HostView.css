@@ -11,12 +11,113 @@
   font-family: var(--font-body);
 }
 
+/* ── Vraag-navigator zijpaneel ── */
+.host-nav {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 6px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(12px);
+  border-right: 1px solid var(--color-border);
+  border-radius: 0 12px 12px 0;
+}
+
+.host-nav-round {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: center;
+}
+
+.host-nav-round-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 2px;
+}
+
+.host-nav-round + .host-nav-round {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--color-border);
+}
+
+.host-nav-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.host-nav-btn:hover {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-accent);
+}
+
+.host-nav-btn.past {
+  background: rgba(255,255,255,0.06);
+  color: var(--color-text-muted);
+}
+
+.host-nav-btn.current {
+  background: var(--color-accent);
+  color: #fff;
+  border-color: var(--color-accent);
+  cursor: default;
+}
+
 .host-center {
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
   color: var(--color-text-muted);
 }
+
+/* ── PIN-scherm ── */
+.host-pin-screen { display: flex; }
+.host-pin-box {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  padding: 40px 48px;
+}
+.host-pin-input {
+  padding: 13px 18px;
+  width: 200px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1.5px solid var(--color-btn-border);
+  border-radius: 9999px;
+  color: var(--color-text);
+  font-size: 1.1rem;
+  letter-spacing: 4px;
+  text-align: center;
+  outline: none;
+}
+.host-pin-input:focus { border-color: var(--color-border-strong); }
 
 /* ── Topbar ── */
 .host-topbar {
@@ -142,9 +243,11 @@
 .host-media-col {
   flex: 10;
   min-width: 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  overflow: hidden;
   animation: pop-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both;
 }
 
@@ -236,12 +339,27 @@
 }
 
 /* ── Media ── */
+.host-media-multi {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+  height: 100%;
+  min-height: 0;
+}
 .host-media-el {
   max-width: 100%;
   max-height: min(62vh, 640px);
   border-radius: 16px;
   border: 1px solid var(--color-border);
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+}
+.host-media-multi .host-media-el {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  object-fit: contain;
+  max-height: none;
 }
 .host-audio-wrap {
   background: var(--color-surface);

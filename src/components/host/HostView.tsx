@@ -11,6 +11,7 @@ import './HostView.css'
 type Props = {
   gameState: GameState | null
   send: (msg: ClientMessage) => void
+  roundCardShowing?: boolean
 }
 
 function BrandMark({ round }: { round: number }) {
@@ -25,7 +26,7 @@ function BrandMark({ round }: { round: number }) {
 }
 
 function MediaReveal({ questionId, media }: { questionId: string; media: MediaContent }) {
-  const [failed, setFailed] = useState(false)
+  const [mainFailed, setMainFailed] = useState(false)
 
   if (media.type === 'chart') {
     return (
@@ -35,6 +36,7 @@ function MediaReveal({ questionId, media }: { questionId: string; media: MediaCo
         data={media.data}
         unit={media.unit}
         note={media.note}
+        maxValue={media.maxValue}
       />
     )
   }
@@ -44,38 +46,53 @@ function MediaReveal({ questionId, media }: { questionId: string; media: MediaCo
   }
 
   // video / image / audio — lokaal geserveerd vanuit /public/media/<id>.<ext>
-  const ext = media.type === 'video' ? 'mp4' : media.type === 'image' ? 'png' : 'mp3'
+  const ext = media.ext ?? (media.type === 'video' ? 'mp4' : media.type === 'image' ? 'png' : 'mp3')
   const src = `/media/${questionId}.${ext}`
 
-  if (failed) {
+  const extraImg = (media.type === 'video' || media.type === 'image') && media.extraImage
+    ? <img className="host-media-el host-media-extra" src={`/media/${media.extraImage}.${media.extraImageExt ?? 'png'}`} alt="" />
+    : null
+
+  if (media.type === 'video') {
     return (
-      <div className="host-media-missing">
-        <span className="host-media-missing-icon">⚠</span>
-        Mediabestand ontbreekt — zet <code>{questionId}.{ext}</code> in <code>public/media/</code>
-        <div className="host-media-missing-desc">{media.description}</div>
+      <div className="host-media-multi">
+        {mainFailed
+          ? <div className="host-media-missing">
+              <span className="host-media-missing-icon">⚠</span>
+              Videobestand ontbreekt — zet <code>{questionId}.mp4</code> in <code>public/media/</code>
+            </div>
+          : <video className="host-media-el" src={src} controls onError={() => setMainFailed(true)} />
+        }
+        {extraImg}
       </div>
     )
   }
-
-  if (media.type === 'video') {
-    return <video className="host-media-el" src={src} controls onError={() => setFailed(true)} />
-  }
   if (media.type === 'image') {
-    return <img className="host-media-el" src={src} alt={media.description} onError={() => setFailed(true)} />
+    return (
+      <div className="host-media-multi">
+        {mainFailed
+          ? <div className="host-media-missing">
+              <span className="host-media-missing-icon">⚠</span>
+              Afbeelding ontbreekt — zet <code>{questionId}.png</code> in <code>public/media/</code>
+            </div>
+          : <img className="host-media-el" src={src} alt={media.description} onError={() => setMainFailed(true)} />
+        }
+        {extraImg}
+      </div>
+    )
   }
   return (
     <div className="host-audio-wrap">
       <div className="host-audio-icon">♫</div>
       <div className="host-audio-desc">{media.description}</div>
-      <audio className="host-media-audio" src={src} controls onError={() => setFailed(true)} />
+      <audio className="host-media-audio" src={src} controls onError={() => setMainFailed(true)} />
     </div>
   )
 }
 
-export function HostView({ gameState, send }: Props) {
+export function HostView({ gameState, send, roundCardShowing = false }: Props) {
   const phase = gameState?.phase
   const finishedFired = useRef(false)
-
   useEffect(() => {
     if (phase === 'finished' && !finishedFired.current) {
       finishedFired.current = true
@@ -102,6 +119,7 @@ export function HostView({ gameState, send }: Props) {
   // Spatiebalk = primaire actie, zodat de quizmaster niet hoeft te muizen
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (roundCardShowing) return
       if (e.code === 'Space' && !(e.target instanceof HTMLInputElement)) {
         e.preventDefault()
         primaryAction()
@@ -109,7 +127,7 @@ export function HostView({ gameState, send }: Props) {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [primaryAction])
+  }, [primaryAction, roundCardShowing])
 
   if (!gameState) {
     return <div className="host-view host-center">Verbinden…</div>
@@ -129,8 +147,36 @@ export function HostView({ gameState, send }: Props) {
     phase === 'reveal' ? (isLastQuestion ? 'Eindstand' : isEndOfRound ? 'Tussenstand' : 'Volgende vraag') :
     phase === 'leaderboard' ? `Start ronde ${currentRound + 1}` : ''
 
+  const rounds = [1, 2, 3, 4]
+
   return (
     <div className="host-view">
+      <aside className="host-nav">
+        {rounds.map(r => (
+          <div key={r} className="host-nav-round">
+            <div className="host-nav-round-label">R{r}</div>
+            {QUESTIONS.filter(q => q.round === r).map((q) => {
+              const idx = QUESTIONS.indexOf(q)
+              const isCurrent = idx === currentQuestion
+              const isPast = idx < currentQuestion
+              return (
+                <button
+                  key={q.id}
+                  className={`host-nav-btn ${isCurrent ? 'current' : ''} ${isPast ? 'past' : ''}`}
+                  title={q.question}
+                  onClick={() => {
+                    if (isCurrent) return
+                    send({ type: 'JUMP_TO_QUESTION', isHost: true, questionIndex: idx })
+                  }}
+                >
+                  {idx + 1}
+                </button>
+              )
+            })}
+          </div>
+        ))}
+      </aside>
+
       <header className="host-topbar">
         <BrandMark round={currentRound} />
         <span className="host-topbar-meta">
@@ -170,7 +216,7 @@ export function HostView({ gameState, send }: Props) {
                 {isPoll && <span className="host-poll-badge">Poll — geen goed of fout</span>}
               </span>
               {phase === 'question' && (
-                <Timer key={currentQuestion} duration={timerDuration} running={true} />
+                <Timer key={currentQuestion} duration={timerDuration} running={!roundCardShowing} />
               )}
             </div>
             <h1 className={`host-question-text ${phase === 'reveal' ? 'compact' : ''}`}>{question.question}</h1>
@@ -231,6 +277,15 @@ export function HostView({ gameState, send }: Props) {
           >
             {primaryLabel}
             <kbd>spatie</kbd>
+          </button>
+        )}
+        {(phase === 'question' || phase === 'reveal') && currentQuestion > 0 && (
+          <button
+            className="host-ctrl-btn ghost"
+            title="Vorige vraag"
+            onClick={() => { if (confirm('Terug naar vorige vraag? Antwoorden worden gewist.')) send({ type: 'PREV_QUESTION', isHost: true }) }}
+          >
+            ←
           </button>
         )}
         <button

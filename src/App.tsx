@@ -40,10 +40,11 @@ export default function App() {
         <RoundTitleCard
           round={gameState.currentRound}
           onDone={() => setShowRoundCard(false)}
+          isHost={isHost}
         />
       )}
       {isHost
-        ? <HostView gameState={gameState} send={send} />
+        ? <HostView gameState={gameState} send={send} roundCardShowing={showRoundCard} />
         : <PlayerView
             gameState={gameState ?? { phase: 'lobby', currentQuestion: 0, currentRound: 1, teams: [], answers: [] }}
             teamId={teamId}

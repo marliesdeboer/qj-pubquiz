@@ -31,7 +31,7 @@ export function Timer({ duration, running, onExpire }: Props) {
       })
     }, 1000)
     return () => clearInterval(id)
-  }, [running, duration]) // reset when question changes (duration key changes)
+  }, [running, duration])
 
   const pct = (remaining / duration) * 100
   const urgent = remaining <= 5

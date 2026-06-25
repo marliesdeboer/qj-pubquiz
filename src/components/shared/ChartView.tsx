@@ -8,6 +8,7 @@ type Props = {
   data: ChartDataPoint[]
   unit?: string
   note?: string
+  maxValue?: number
 }
 
 const ANIM_MS = 1100
@@ -46,11 +47,11 @@ function useEntered(): boolean {
   return entered
 }
 
-export function ChartView({ chartType, title, data, unit, note }: Props) {
+export function ChartView({ chartType, title, data, unit, note, maxValue }: Props) {
   if (chartType === 'donut') {
     return <DonutChart title={title} data={data} unit={unit} note={note} />
   }
-  return <BarChart title={title} data={data} unit={unit} note={note} />
+  return <BarChart title={title} data={data} unit={unit} note={note} maxValue={maxValue} />
 }
 
 function CountUpValue({ value, unit, decimals }: { value: number; unit: string; decimals: number }) {
@@ -73,7 +74,7 @@ function decimalsOf(v: number): number {
   return Math.min(String(v).split('.')[1]?.length ?? 0, 2)
 }
 
-function BarChart({ title, data, unit, note }: Omit<Props, 'chartType'>) {
+function BarChart({ title, data, unit, note, maxValue }: Omit<Props, 'chartType'>) {
   const entered = useEntered()
   // Gemixte eenheden of een toelichting → losse statkaarten i.p.v. gedeelde as
   const hasMixedUnits = data.some(d => d.unit && d.unit !== unit)
@@ -102,7 +103,7 @@ function BarChart({ title, data, unit, note }: Omit<Props, 'chartType'>) {
     )
   }
 
-  const absMax = Math.max(...data.map(d => Math.abs(d.value)), 1)
+  const absMax = maxValue ?? Math.max(...data.map(d => Math.abs(d.value)), 1)
 
   return (
     <div className="chart-wrap">

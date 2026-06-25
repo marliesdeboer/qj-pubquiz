@@ -119,3 +119,15 @@
   margin: 3px;
   animation: pop-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+
+.lobby-input-error {
+  border-color: #FF3B38 !important;
+  box-shadow: 0 0 18px rgba(232, 32, 30, 0.25) !important;
+}
+
+.lobby-error {
+  font-size: 0.82rem;
+  color: #FF3B38;
+  text-align: center;
+  animation: phase-in 0.3s ease both;
+}

@@ -31,10 +31,10 @@ export type ChartDataPoint = {
 }
 
 export type MediaContent =
-  | { type: 'chart'; chartType: 'bar' | 'donut'; title: string; data: ChartDataPoint[]; unit?: string; note?: string }
-  | { type: 'video'; description: string; sourceUrl: string; searchTerm: string }
-  | { type: 'image'; description: string; searchTerm: string }
-  | { type: 'audio'; description: string; searchTerm: string }
+  | { type: 'chart'; chartType: 'bar' | 'donut'; title: string; data: ChartDataPoint[]; unit?: string; note?: string; maxValue?: number }
+  | { type: 'video'; description: string; ext?: string; sourceUrl?: string; searchTerm?: string; extraImage?: string; extraImageExt?: string }
+  | { type: 'image'; description: string; ext?: string; searchTerm?: string; extraImage?: string; extraImageExt?: string }
+  | { type: 'audio'; description: string; ext?: string; searchTerm?: string; extraImage?: string; extraImageExt?: string }
   | { type: 'poll'; description: string }
 
 export type Question = {
@@ -54,6 +54,8 @@ export type ClientMessage =
   | { type: 'JOIN'; teamId: string; teamName: string }
   | { type: 'SUBMIT_ANSWER'; teamId: string; answer: string }
   | { type: 'NEXT_QUESTION'; isHost: true }
+  | { type: 'PREV_QUESTION'; isHost: true }
+  | { type: 'JUMP_TO_QUESTION'; isHost: true; questionIndex: number }
   | { type: 'REVEAL'; isHost: true }
   | { type: 'NEXT_ROUND'; isHost: true }
   | { type: 'RESET'; isHost: true }
