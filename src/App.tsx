@@ -1,14 +1,22 @@
 import { useState, useEffect, useRef } from 'react'
 import { useGameSocket } from './hooks/useGameSocket'
+import { useSoloGame } from './hooks/useSoloGame'
 import { ThemeProvider } from './components/shared/ThemeProvider'
 import { PlayerView } from './components/player/PlayerView'
 import { HostView } from './components/host/HostView'
 import { RoundTitleCard } from './components/shared/RoundTitleCard'
 
 const isHost = window.location.pathname === '/host'
+const isSolo = new URLSearchParams(window.location.search).has('solo')
+
+function useGame() {
+  const socket = useGameSocket()
+  const solo = useSoloGame()
+  return isSolo ? solo : socket
+}
 
 export default function App() {
-  const { gameState, send, teamId } = useGameSocket()
+  const { gameState, send, teamId } = useGame()
   const [showRoundCard, setShowRoundCard] = useState(false)
   const prevRound = useRef<number>(1)
   const prevPhase = useRef<string | null>(null)
