@@ -148,6 +148,19 @@ export default class QuizServer implements Party.Server {
         break
       }
 
+      case 'GO_TO_LOBBY': {
+        if (!msg.isHost) return
+        // Terug naar startscherm, maar teams en scores blijven behouden.
+        this.state = {
+          ...this.state,
+          phase: 'lobby',
+          currentQuestion: 0,
+          currentRound: 1,
+          answers: [],
+        }
+        break
+      }
+
       case 'RESET': {
         if (!msg.isHost) return
         this.state = { ...INITIAL_STATE, teams: [] }

@@ -52,13 +52,13 @@ export function RoundTitleCard({ round, onDone, isHost = false }: Props) {
       <div className="rc-glow" aria-hidden="true" />
       {theme === 'neutral' && (
         <div className="rc-logo rc-logo-duo">
-          <span className="rc-q">Q</span>
+          <span className="rc-q">Qmusic</span>
           <span className="rc-amp">&</span>
           <span className="rc-j">JOE</span>
         </div>
       )}
-      {theme === 'qmusic' && <div className="rc-logo rc-logo-q">QMUSIC</div>}
-      {theme === 'joe' && <div className="rc-logo rc-logo-joe">joe<span>.</span></div>}
+      {theme === 'qmusic' && <div className="rc-logo rc-logo-q">Qmusic</div>}
+      {theme === 'joe' && <div className="rc-logo rc-logo-joe">JOE</div>}
       <div className="rc-round-label">Ronde {round}</div>
       <div className="rc-title">{title}</div>
       <div className="rc-subtitle">{subtitle}</div>

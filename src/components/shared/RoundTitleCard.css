@@ -66,14 +66,15 @@
   font-size: 1.5rem;
   letter-spacing: 5px;
 }
-.rc-logo-duo .rc-q   { color: #FF3B38; }
+.rc-logo-duo .rc-q   { color: #FF3B38; font-family: 'Anton', sans-serif; text-transform: none; letter-spacing: 1px; }
 .rc-logo-duo .rc-amp { color: rgba(242, 240, 235, 0.4); font-size: 1.1rem; }
 .rc-logo-duo .rc-j   { color: #6DA3EB; }
 
 .rc-logo-q {
   font-family: 'Anton', sans-serif;
+  text-transform: none;
   font-size: 1.5rem;
-  letter-spacing: 6px;
+  letter-spacing: 1px;
   color: #fff;
   background: #E8201E;
   padding: 10px 26px 8px;
@@ -118,7 +119,7 @@
 .round-card.qmusic .rc-title {
   font-family: 'Anton', sans-serif;
   letter-spacing: 2px;
-  text-transform: uppercase;
+  text-transform: none;
 }
 .round-card.joe .rc-title {
   font-family: 'Nunito', sans-serif;
@@ -134,6 +135,7 @@
   animation: rc-rise 0.6s ease 0.75s both;
 }
 .round-card.joe .rc-subtitle { font-family: 'Nunito', sans-serif; }
+.round-card.qmusic .rc-subtitle { text-transform: none; }
 
 /* ── Sparkles ── */
 .rc-sparkle {

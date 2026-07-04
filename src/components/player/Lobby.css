@@ -29,7 +29,7 @@
   text-align: center;
   line-height: 1.05;
 }
-.lobby-title .tq { color: #FF3B38; }
+.lobby-title .tq { color: #FF3B38; font-family: 'Anton', sans-serif; text-transform: none; letter-spacing: 0.5px; }
 .lobby-title .tj { color: #6DA3EB; }
 
 .lobby-sub {

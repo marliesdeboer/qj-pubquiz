@@ -15,11 +15,11 @@ type Props = {
 
 function PlayerBrand({ round }: { round: number }) {
   const theme = getThemeForRound(round)
-  if (theme === 'qmusic') return <span className="player-brand brand-q">QMUSIC</span>
-  if (theme === 'joe') return <span className="player-brand brand-joe">joe<span>.</span></span>
+  if (theme === 'qmusic') return <span className="player-brand brand-q">Qmusic</span>
+  if (theme === 'joe') return <span className="player-brand brand-joe">JOE</span>
   return (
     <span className="player-brand brand-duo">
-      <span className="bq">Q</span><span className="bamp">&</span><span className="bj">JOE</span>
+      <span className="bq">Qmusic</span><span className="bamp">&</span><span className="bj">JOE</span>
     </span>
   )
 }

@@ -133,11 +133,13 @@
   letter-spacing: 3px;
 }
 .host-brand-duo { font-family: 'Bebas Neue', sans-serif; }
-.host-brand-duo .bq   { color: #FF3B38; }
+.host-brand-duo .bq   { color: #FF3B38; font-family: 'Anton', sans-serif; text-transform: none; letter-spacing: 0.5px; }
 .host-brand-duo .bamp { color: var(--color-text-dim); margin: 0 6px; }
 .host-brand-duo .bj   { color: #6DA3EB; }
 .host-brand-q {
   font-family: 'Anton', sans-serif;
+  text-transform: none;
+  letter-spacing: 0.5px;
   color: #fff;
   background: #E8201E;
   padding: 4px 14px 3px;
@@ -197,6 +199,7 @@
   text-transform: uppercase;
   color: var(--color-text-muted);
 }
+.host-kicker .brand-exact { text-transform: none; }
 .host-hero-title {
   font-family: var(--font-display);
   font-size: clamp(3.5rem, 9vw, 8rem);

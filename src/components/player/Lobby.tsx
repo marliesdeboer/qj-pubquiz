@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { GameState, ClientMessage } from '../../types/game'
 import './Lobby.css'
 
@@ -17,9 +17,16 @@ export function Lobby({ gameState, teamId, send }: Props) {
     () => sessionStorage.getItem('qj-access-granted') === ACCESS_CODE
   )
   const [name, setName] = useState('')
-  const [joined, setJoined] = useState(
-    () => gameState.teams.some(t => t.id === teamId)
-  )
+  // 'joined' volgt de serverstate: als het team daar niet (meer) bestaat
+  // (bijv. na een RESET of server-herstart), verschijnt het naamformulier opnieuw.
+  // pendingJoin overbrugt de korte periode tussen JOIN versturen en de broadcast terug.
+  const isInTeams = gameState.teams.some(t => t.id === teamId)
+  const [pendingJoin, setPendingJoin] = useState(false)
+  const joined = isInTeams || pendingJoin
+
+  useEffect(() => {
+    if (isInTeams && pendingJoin) setPendingJoin(false)
+  }, [isInTeams, pendingJoin])
 
   function handleAccess() {
     if (accessCode.trim().toLowerCase() === ACCESS_CODE.toLowerCase()) {
@@ -35,14 +42,14 @@ export function Lobby({ gameState, teamId, send }: Props) {
     const trimmed = name.trim()
     if (!trimmed) return
     send({ type: 'JOIN', teamId, teamName: trimmed })
-    setJoined(true)
+    setPendingJoin(true)
   }
 
   return (
     <div className="lobby">
       <div className="lobby-kicker">Leiderschapssessie · Van radio naar content</div>
       <div className="lobby-title">
-        <span className="tq">Q</span> & <span className="tj">Joe</span> Quiz
+        <span className="tq">Qmusic</span> & <span className="tj">JOE</span> Quiz
       </div>
 
       {!accessGranted ? (

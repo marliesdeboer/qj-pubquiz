@@ -16,11 +16,11 @@ type Props = {
 
 function BrandMark({ round }: { round: number }) {
   const theme = getThemeForRound(round)
-  if (theme === 'qmusic') return <span className="host-brand host-brand-q">QMUSIC</span>
-  if (theme === 'joe') return <span className="host-brand host-brand-joe">joe<span>.</span></span>
+  if (theme === 'qmusic') return <span className="host-brand host-brand-q">Qmusic</span>
+  if (theme === 'joe') return <span className="host-brand host-brand-joe">JOE</span>
   return (
     <span className="host-brand host-brand-duo">
-      <span className="bq">Q</span><span className="bamp">&</span><span className="bj">JOE</span>
+      <span className="bq">Qmusic</span><span className="bamp">&</span><span className="bj">JOE</span>
     </span>
   )
 }
@@ -192,7 +192,7 @@ export function HostView({ gameState, send, roundCardShowing = false }: Props) {
 
       {phase === 'lobby' && (
         <main className="host-stage host-stage-center" key="lobby">
-          <div className="host-kicker">Q & Joe · Leiderschapssessie</div>
+          <div className="host-kicker"><span className="brand-exact">Qmusic</span> & JOE · Leiderschapssessie</div>
           <h1 className="host-hero-title">Van radio<br />naar content</h1>
           <div className="host-lobby-status">
             {teams.length === 0
@@ -261,7 +261,7 @@ export function HostView({ gameState, send, roundCardShowing = false }: Props) {
 
       {phase === 'finished' && (
         <main className="host-stage host-stage-center" key="finished">
-          <div className="host-kicker">Q & Joe · Van radio naar content</div>
+          <div className="host-kicker"><span className="brand-exact">Qmusic</span> & JOE · Van radio naar content</div>
           <h1 className="host-hero-title host-hero-smaller">Eindstand</h1>
           <Leaderboard teams={teams} size="stage" podium />
           <div className="host-finished-note">Dit gesprek gaat nu pas écht beginnen.</div>
@@ -288,8 +288,18 @@ export function HostView({ gameState, send, roundCardShowing = false }: Props) {
             ←
           </button>
         )}
+        {phase !== 'lobby' && (
+          <button
+            className="host-ctrl-btn ghost"
+            title="Terug naar startscherm (scores blijven behouden)"
+            onClick={() => { if (confirm('Terug naar het startscherm? Scores en teams blijven behouden.')) send({ type: 'GO_TO_LOBBY', isHost: true }) }}
+          >
+            ⌂
+          </button>
+        )}
         <button
           className="host-ctrl-btn ghost"
+          title="Hele quiz resetten"
           onClick={() => { if (confirm('Hele quiz resetten? Alle scores gaan verloren.')) send({ type: 'RESET', isHost: true }) }}
         >
           ⟳

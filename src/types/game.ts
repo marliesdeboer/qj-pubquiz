@@ -58,6 +58,7 @@ export type ClientMessage =
   | { type: 'JUMP_TO_QUESTION'; isHost: true; questionIndex: number }
   | { type: 'REVEAL'; isHost: true }
   | { type: 'NEXT_ROUND'; isHost: true }
+  | { type: 'GO_TO_LOBBY'; isHost: true }
   | { type: 'RESET'; isHost: true }
 
 // Server → Client messages

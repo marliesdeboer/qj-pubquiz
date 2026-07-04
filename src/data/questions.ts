@@ -63,6 +63,7 @@ export const QUESTIONS: Question[] = [
     source: '',
     media: {
       type: 'image',
+      ext: 'jpg',
       description: 'Live sport op lineaire TV: Champions League, Formule 1, Olympische Spelen',
       searchTerm: 'lineaire TV live sport Champions League',
     },
@@ -72,19 +73,15 @@ export const QUESTIONS: Question[] = [
     question: 'Wat is wereldwijd inmiddels het grootste platform om podcasts te beluisteren?',
     options: ['Spotify', 'YouTube', 'Apple Podcasts', 'TikTok'],
     answerIndex: 1,
-    explanation: 'YouTube — ruim 1 miljard maandelijkse podcast-kijkers sinds 2025. Podcast is geen audiomedium meer maar een videomedium: mensen kíjken naar Joe Rogan.',
-    source: 'Variety / Edison Podcast Metrics 2025 — https://variety.com/2025/digital/news/youtube-2025-monthly-podcast-listeners-viewers-1236319232/',
+    explanation: 'YouTube — ruim 1 miljard maandelijkse podcastgebruikers wereldwijd (feb 2025). Ter vergelijking: Spotify had begin 2025 zo\'n 678 miljoen gebruikers in totaal — YouTube\'s podcastpubliek alléén is dus al groter dan heel Spotify. Podcast is geen audiomedium meer maar een videomedium: mensen kíjken naar Joe Rogan.',
+    source: 'YouTube Official Blog — 1 mld maandelijkse podcastgebruikers (feb 2025): https://blog.youtube/news-and-events/1-billion-monthly-podcast-users/ · Spotify maandelijkse gebruikers Q1 2025 (678 mln): https://www.statista.com/statistics/367739/spotify-global-mau/',
     media: {
       type: 'chart', chartType: 'bar',
-      title: 'Voorkeursplatform voor podcasts (VS)',
+      title: 'Maandelijkse gebruikers wereldwijd (begin 2025)',
       data: [
-        { label: 'YouTube', value: 31 },
-        { label: 'Spotify', value: 27 },
-        { label: 'Apple Podcasts', value: 15 },
-        { label: 'Overig', value: 27 },
+        { label: 'YouTube · podcast-MAU', value: 1, unit: ' mld' },
+        { label: 'Spotify · MAU totaal', value: 678, unit: ' mln' },
       ],
-      unit: '%',
-      maxValue: 100,
     },
   },
 
@@ -197,53 +194,65 @@ export const QUESTIONS: Question[] = [
   },
   {
     id: 'V12', round: 3, type: 'quiz',
-    question: 'Vergelijk de Instagram-volgers van Marieke Elsinga met die van Qmusic NL zelf. Wat klopt?',
+    question: 'Vergelijk de Instagram-volgers van Mattie & Marieke met die van Qmusic NL zelf. Wat klopt?',
     options: [
-      'Qmusic heeft meer volgers dan Marieke',
+      'Qmusic heeft meer volgers dan Mattie & Marieke',
       'Ze zitten ongeveer op hetzelfde niveau',
-      'Marieke heeft bijna twee keer zoveel als Qmusic',
-      'Marieke heeft meer dan drie keer zoveel als Qmusic',
+      'Mattie & Marieke hebben ruim anderhalf keer zoveel als Qmusic',
+      'Mattie & Marieke hebben meer dan drie keer zoveel als Qmusic',
     ],
     answerIndex: 2,
-    explanation: 'Marieke: 634K volgers, Qmusic NL: 334K. Het merk zit in de presentator, niet in de zender. Als Marieke vertrekt, vertrekt haar publiek mee. Tegelijk: Q heeft 4,4 miljoen wekelijkse luisteraars maar slechts 334K Instagram-volgers — de digitale conversie is mager.',
-    source: 'Instagram @mariekeelsinga / @qmusicnl, juni 2026',
+    explanation: 'Mattie & Marieke: 550K volgers, Qmusic NL: 334K. Het merk zit in de presentator, niet in de zender. Tegelijk: Qmusic heeft 4,4 miljoen wekelijkse luisteraars maar slechts 334K Instagram-volgers — de digitale conversie is mager.',
+    source: 'Instagram Mattie & Marieke / Qmusic NL, juni 2026',
+    // Geen videobestand beschikbaar (V12.mp4 ontbreekt) — in-app chart met de volgerscijfers.
     media: {
-      type: 'video',
-      description: 'Instagram-volgers Marieke Elsinga vs Qmusic NL',
+      type: 'chart', chartType: 'bar',
+      title: 'Instagram-volgers (juni 2026)',
+      data: [
+        { label: 'Mattie & Marieke', value: 550 },
+        { label: '@qmusicnl', value: 334 },
+      ],
+      unit: 'K',
     },
   },
   {
     id: 'V13', round: 3, type: 'quiz',
-    question: 'De Persgroep (het huidige DPG Media) kocht Noordzee FM in 2005 en hernoemde het tot Qmusic. Wat betaalden ze?',
-    options: ['Niets', '€1', '€100.000', '€1 miljoen'],
+    question: 'Het marktaandeel van Qmusic (20-49) stijgt, terwijl de themazenders blijven groeien. Welke themazender is het grootst?',
+    options: ['Qmusic Het Foute Uur', 'Qmusic Non Stop', 'Qmusic 90s & 00s', 'Qmusic Limburg'],
     answerIndex: 1,
-    explanation: '€1 — Talpa (John de Mol) moest de frequentie afstoten om Radio 538 te mogen kopen van de mededingingsautoriteit. De frequentie was de waarde, niet het merk.',
-    source: 'Spreekbuis — https://www.spreekbuis.nl/qmusic-bestaat-15-jaar/',
+    explanation: 'Qmusic Non Stop heeft een marktaandeel (20-49) van 1,5% en groeit (+0,3 procentpunt, was 1,2%) — terwijl er met Qmusic 90s & 00s (0,5%) net een nieuwe themazender is bijgekomen. Qmusic zelf blijft ondertussen ook gewoon groeien in de doelgroep.',
+    source: '',
     media: {
-      type: 'image',
-      ext: 'jpg',
-      description: 'Qmusic 15 jaar — van Noordzee FM naar bereikleider',
-      searchTerm: 'Qmusic Noordzee FM DPG Media geschiedenis',
+      type: 'chart', chartType: 'bar',
+      title: 'Marktaandeel themazenders (20-49)',
+      data: [
+        { label: 'Qmusic Non Stop', value: 1.5 },
+        { label: 'Qmusic 90s & 00s', value: 0.5 },
+      ],
+      unit: '%',
+      note: 'Qmusic Non Stop groeide van 1,2% naar 1,5% — Qmusic 90s & 00s is een gloednieuwe themazender.',
     },
   },
   {
     id: 'V14', round: 3, type: 'quiz',
-    question: 'Van de totale luistertijd bij 13-34-jarigen gaat nog maar een deel naar live radio. Hoeveel?',
-    options: ['71%', '58%', '44%', '29%'],
-    answerIndex: 2,
-    explanation: '44%. Bij 50-plussers is dat nog 82% — bijna een factor 2 verschil. De radioluisteraar van nu vergrijst; de jonge luisteraar komt niet vanzelf terug.',
-    source: 'NMO AudioMonitor 2024 — https://audify.nl/nieuws/live-radio-heeft-het-grootste-aandeel-in-de-totale-luistertijd/',
+    question: 'Hoeveel % van de Qmusic-luisteraars luistert ook naar één van de themazenders van Qmusic/JOE?',
+    options: ['6%', '16%', '26%', '36%'],
+    answerIndex: 1,
+    explanation: '16%. Dit percentage geldt zowel voor de doelgroep 20-49 als voor 25-54 jaar.',
+    source: '',
     media: {
-      type: 'chart', chartType: 'bar',
-      title: 'Aandeel live radio in luistertijd',
-      data: [{ label: '13-34 jaar', value: 44 }, { label: '50+ jaar', value: 82 }],
+      type: 'chart', chartType: 'donut',
+      title: 'Qmusic-luisteraars die ook een themazender beluisteren',
+      data: [
+        { label: 'Luistert ook naar themazender', value: 16 },
+        { label: 'Alleen hoofdzender', value: 84 },
+      ],
       unit: '%',
-      maxValue: 100,
     },
   },
   {
     id: 'V15', round: 3, type: 'poll',
-    question: 'Wat is over tien jaar de grootste bedreiging voor het Qmusic en Joe businessmodel?',
+    question: 'Wat is over tien jaar de grootste bedreiging voor het businessmodel van radio?',
     options: [
       'Spotify pikt de muziekluisteraar in',
       'AI-presentatoren vervangen duur talent',
@@ -251,22 +260,22 @@ export const QUESTIONS: Question[] = [
       'De FM-frequentie verdwijnt',
     ],
     answerIndex: null,
-    explanation: 'Geen fout antwoord. Strategisch meest onderbouwd: C (advertentie-inkomsten zijn de levensader, en social biedt betere targeting en data). Maar let op B: na de CADA-vraag (V2) is dat ineens minder hypothetisch.',
+    explanation: 'Geen fout antwoord. Strategisch meest onderbouwd: C (advertentie-inkomsten zijn de levensader). Er gaat nu wereldwijd al zo\'n kwart (25%) van de marketingbudgetten naar social media, en die bestedingen groeien nog steeds met zo\'n 21% per jaar. Let ook op B: na de CADA-vraag (V2) is dat ineens minder hypothetisch.',
     source: '',
     media: { type: 'poll', description: 'Live stemverdeling uit de quiz zelf — geen externe asset.' },
   },
 
-  // ── RONDE 4: De Joe-ronde ────────────────────────────────────────
+  // ── RONDE 4: De JOE-ronde ────────────────────────────────────────
   {
     id: 'V16', round: 4, type: 'quiz',
-    question: 'Wat was het marktaandeel van Joe bij de lancering in september 2023?',
+    question: 'Wat was het marktaandeel van JOE bij de lancering in september 2023?',
     options: ['1%', '2,5%', '4%', '5%'],
     answerIndex: 2,
-    explanation: 'Joe startte met een marktaandeel van 2,5% op de doelgroep 13+ en 4,1% in de doelgroep 35-59 jaar — een veelbelovende start voor een nieuw station.',
+    explanation: 'JOE startte met een marktaandeel van 2,5% op de doelgroep 13+ en 4,1% in de doelgroep 35-59 jaar — een veelbelovende start voor een nieuw station.',
     source: 'Marketing Tribune, sept 2023 — https://www.marketingtribune.nl/media/nieuws/2023/09/luistercijfers-veel-belovende-start-joe-radio-10-fans-blijven-hangen/index.xml',
     media: {
       type: 'image',
-      description: 'Joe marktaandeel bij lancering september 2023',
+      description: 'JOE marktaandeel bij lancering september 2023',
     },
   },
   {
@@ -312,11 +321,11 @@ export const QUESTIONS: Question[] = [
       'Persoonlijke aanbevelingen',
     ],
     answerIndex: 0,
-    explanation: 'Word je onderdeel van iemands ochtendritueel, dan ben je moeilijk te vervangen. Daarom investeert Joe juist in de ochtend (Coen & Sander). B (live & lokaal) is een echt argument — maar habit is sterker, want dagelijks en automatisch. C en D zijn juist het terrein waar streaming wint.',
-    source: 'Joe — ochtendshow Coen & Sander; Radiowereld, mei 2026 — https://radiowereld.nl/medianieuws/2026/05/joe-deejays-coen-en-sander-dagen-luisteraars-uit-zonder-telefoon/',
+    explanation: 'Word je onderdeel van iemands ochtendritueel, dan ben je moeilijk te vervangen. Daarom investeert JOE juist in de ochtend (Coen & Sander). B (live & lokaal) is een echt argument — maar habit is sterker, want dagelijks en automatisch. C en D zijn juist het terrein waar streaming wint.',
+    source: 'JOE — ochtendshow Coen & Sander; Radiowereld, mei 2026 — https://radiowereld.nl/medianieuws/2026/05/joe-deejays-coen-en-sander-dagen-luisteraars-uit-zonder-telefoon/',
     media: {
       type: 'audio',
-      description: 'Fragment of openingsleader van Coen & Sander (Joe-ochtend)',
+      description: 'Fragment of openingsleader van Coen & Sander (JOE-ochtend)',
       searchTerm: 'Coen en Sander Joe ochtendshow',
       extraImage: 'V19-coensander',
       extraImageExt: 'jpg',
@@ -324,7 +333,7 @@ export const QUESTIONS: Question[] = [
   },
   {
     id: 'V20', round: 4, type: 'poll',
-    question: 'Als Joe en Qmusic over 10 jaar succesvol zijn, wat zijn ze dan waarschijnlijk?',
+    question: 'Als JOE en Qmusic over 10 jaar succesvol zijn, wat zijn ze dan waarschijnlijk?',
     options: [
       'Nog steeds radio — maar volledig digitaal',
       'Contentmerken met radio als één van de kanalen',
@@ -356,8 +365,8 @@ export function getThemeForRound(round: number): ThemeName {
   return 'neutral'
 }
 
-export const ROUND_TITLES = ['', 'De wereld verandert', 'Hoe doen anderen het?', 'De Q-ronde', 'De Joe-ronde']
-export const ROUND_SUBTITLES = ['', 'Externe trends & data', 'Internationale voorbeelden', 'Qmusic', 'Joe']
+export const ROUND_TITLES = ['', 'De wereld verandert', 'Hoe doen anderen het?', 'De Qmusic-ronde', 'De JOE-ronde']
+export const ROUND_SUBTITLES = ['', 'Externe trends & data', 'Internationale voorbeelden', 'Qmusic', 'JOE']
 
 export function getTimerForRound(round: number): number {
   if (round === 3) return 20
