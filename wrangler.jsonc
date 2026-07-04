@@ -1,0 +1,30 @@
+// Cloudflare Workers-config — vervangt partykit.json.
+// De server draait als Durable Object (partyserver) op het eigen Cloudflare-account,
+// omdat het gedeelde partykit.dev-domein vol zit (10.000-domeinenlimiet).
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "qj-pubquiz",
+  "main": "party/server.ts",
+  "compatibility_date": "2026-06-29",
+  "durable_objects": {
+    "bindings": [
+      {
+        // Bindingnaam "main" matcht het standaard party-pad van partysocket:
+        // /parties/main/<room> — de client hoeft dus niet aangepast te worden.
+        "name": "main",
+        "class_name": "QuizServer"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["QuizServer"]
+    }
+  ],
+  "dev": {
+    // Zelfde poort als partykit dev, zodat de localhost-fallback in
+    // useGameSocket.ts blijft werken.
+    "port": 1999
+  }
+}

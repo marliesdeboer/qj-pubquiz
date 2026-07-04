@@ -1,4 +1,5 @@
-import type * as Party from 'partykit/server'
+import { routePartykitRequest, Server } from 'partyserver'
+import type { Connection, WSMessage } from 'partyserver'
 import type { GameState, ClientMessage, ServerMessage } from '../src/types/game'
 import {
   QUESTIONS,
@@ -15,16 +16,28 @@ const INITIAL_STATE: GameState = {
   answers: [],
 }
 
-export default class QuizServer implements Party.Server {
+// Sleutel waaronder de state in Durable Object storage bewaard wordt,
+// zodat een DO-evictie de teams/scores niet meer wist.
+const STORAGE_KEY = 'gameState'
+
+interface Env {
+  main: DurableObjectNamespace
+}
+
+export class QuizServer extends Server {
   private state: GameState = { ...INITIAL_STATE, teams: [] }
 
-  constructor(readonly room: Party.Room) {}
+  async onStart() {
+    const saved = await this.ctx.storage.get<GameState>(STORAGE_KEY)
+    if (saved) this.state = saved
+  }
 
-  onConnect(conn: Party.Connection) {
+  onConnect(conn: Connection) {
     conn.send(JSON.stringify({ type: 'STATE_UPDATE', state: this.state } satisfies ServerMessage))
   }
 
-  onMessage(raw: string) {
+  onMessage(_conn: Connection, raw: WSMessage) {
+    if (typeof raw !== 'string') return
     let msg: ClientMessage
     try {
       msg = JSON.parse(raw) as ClientMessage
@@ -168,11 +181,21 @@ export default class QuizServer implements Party.Server {
       }
     }
 
-    this.broadcast()
+    this.broadcastState()
   }
 
-  private broadcast() {
+  private broadcastState() {
     const msg: ServerMessage = { type: 'STATE_UPDATE', state: this.state }
-    this.room.broadcast(JSON.stringify(msg))
+    this.broadcast(JSON.stringify(msg))
+    void this.ctx.storage.put(STORAGE_KEY, this.state)
+  }
+}
+
+export default {
+  async fetch(request: Request, env: Env): Promise<Response> {
+    return (
+      (await routePartykitRequest(request, env as never)) ??
+      new Response('Not found', { status: 404 })
+    )
   }
 }

@@ -11,18 +11,24 @@ Real-time multiplayer pub quiz voor de Q&J leadership session.
    npm install
    ```
 
-2. **Deploy PartyKit server**
+2. **Deploy de WebSocket-server naar Cloudflare Workers**
    ```bash
-   npx partykit login
-   npx partykit deploy
+   npx wrangler login
+   npx wrangler deploy
    ```
-   Noteer de URL: `your-project.username.partykit.dev`
+   Noteer de URL: `qj-pubquiz.<jouw-subdomein>.workers.dev`
+
+   > De server draaide voorheen op PartyKit (`*.partykit.dev`), maar dat
+   > gedeelde domein zit vol (Cloudflare-limiet van 10.000 subdomeinen).
+   > Daarom draait dezelfde servercode nu via
+   > [partyserver](https://github.com/cloudflare/partykit) als Durable Object
+   > op je eigen (gratis) Cloudflare-account.
 
 3. **Stel environment variable in**
 
    In Cloudflare Pages dashboard → Settings → Environment variables:
    ```
-   VITE_PARTYKIT_HOST = your-project.username.partykit.dev
+   VITE_PARTYKIT_HOST = qj-pubquiz.<jouw-subdomein>.workers.dev
    ```
 
 4. **Deploy naar Cloudflare Pages**
@@ -39,10 +45,10 @@ Real-time multiplayer pub quiz voor de Q&J leadership session.
 ## Lokaal ontwikkelen
 
 ```bash
-# Terminal 1
-npx partykit dev
+# Terminal 1 — WebSocket-server op localhost:1999
+npm run dev:server
 
-# Terminal 2
+# Terminal 2 — frontend op localhost:5173
 npm run dev
 ```
 

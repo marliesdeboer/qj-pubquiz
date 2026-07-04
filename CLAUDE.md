@@ -6,12 +6,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 npm run dev          # Vite dev server → http://localhost:5173
+npm run dev:server   # Cloudflare Workers dev server (wrangler) → localhost:1999 (run alongside npm dev)
 npm run build        # tsc -b && vite build (strict: noUnusedLocals, noUnusedParameters)
 npm run lint         # ESLint
-npm run preview      # Serve the built dist/ locally (no PartyKit — useful for static checks)
+npm run preview      # Serve the built dist/ locally (no WebSocket server — useful for static checks)
 
-npx partykit dev     # PartyKit WebSocket server → localhost:1999 (run alongside npm dev)
-npx partykit deploy  # Deploy server to partykit.dev cloud
+npm run deploy:server  # wrangler deploy → qj-pubquiz.<subdomain>.workers.dev
 ```
 
 Both servers must run simultaneously for local development. The Vite frontend connects to `VITE_PARTYKIT_HOST` (falls back to `localhost:1999`).
@@ -21,14 +21,14 @@ Both servers must run simultaneously for local development. The Vite frontend co
 ## Deployment
 
 - Frontend: Cloudflare Pages — build command `npm run build`, output `dist`
-- Backend: PartyKit — `npx partykit deploy` → `your-project.username.partykit.dev`
-- Set `VITE_PARTYKIT_HOST=your-project.username.partykit.dev` in Cloudflare Pages environment variables
+- Backend: Cloudflare Workers (Durable Object via `partyserver`) — `npx wrangler deploy` → `qj-pubquiz.<subdomain>.workers.dev`. Config in `wrangler.jsonc`. **History:** the server originally deployed to PartyKit's shared `partykit.dev` domain, but that zone hit Cloudflare's hard limit of 10,000 custom domains (July 2026), so it was migrated to `partyserver` (Cloudflare's official PartyKit successor) on Marlies's own Cloudflare account — same account that hosts the Pages frontend, no custom domain needed.
+- Set `VITE_PARTYKIT_HOST=qj-pubquiz.<subdomain>.workers.dev` in Cloudflare Pages environment variables
 
 ## Architecture
 
-**State model:** All authoritative game state lives in the PartyKit server (`party/server.ts`) in memory. Clients hold no state — on every incoming message they receive a full `GameState` snapshot and re-render. There is no Redux/Zustand.
+**State model:** All authoritative game state lives in the server (`party/server.ts`), a `partyserver` `Server` (Cloudflare Durable Object). State is held in memory and mirrored to Durable Object storage on every broadcast (`STORAGE_KEY = 'gameState'`, loaded back in `onStart()`), so a DO eviction no longer wipes teams/scores. Clients hold no state — on every incoming message they receive a full `GameState` snapshot and re-render. There is no Redux/Zustand.
 
-**Message flow:** Clients send typed `ClientMessage` objects over WebSocket; server mutates state and calls `this.room.broadcast()` with a `STATE_UPDATE` containing the full new `GameState`. Both `src/types/game.ts` and `party/server.ts` import from `src/data/questions.ts` — questions are the single source of truth shared by client and server.
+**Message flow:** Clients send typed `ClientMessage` objects over WebSocket; server mutates state and calls `this.broadcast()` with a `STATE_UPDATE` containing the full new `GameState`. Both `src/types/game.ts` and `party/server.ts` import from `src/data/questions.ts` — questions are the single source of truth shared by client and server. Routing uses partyserver's `routePartykitRequest` with a Durable Object binding named `main` (in `wrangler.jsonc`) so partysocket's default `/parties/main/<room>` path keeps working unchanged.
 
 **Routing:** No router library. `window.location.pathname === '/host'` in `App.tsx` selects between `HostView` and `PlayerView`. Cloudflare Pages SPA routing is handled by `public/_redirects`.
 
