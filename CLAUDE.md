@@ -34,6 +34,8 @@ Both servers must run simultaneously for local development. The Vite frontend co
 
 **Theming:** `ThemeProvider` sets `data-theme="neutral"|"qmusic"|"joe"` plus class `theme-root` on a wrapper div based on `currentRound`. All component styles use CSS custom properties from `src/styles/themes.css`; the neutral vars double as `:root` defaults so anything outside the wrapper (e.g. `body`) still resolves. Theme-specific decoration (brand glow `--color-bg-glow`, top brand line `--topline`, ✦ sparkles via the `.sparkles` child) lives on the wrapper in `src/styles/index.css`.
 
+**Brand naming:** always render as "Qmusic" and "JOE" (mixed-case, never bare "Q" or all-caps "QMUSIC"/"joe.") — the `BrandMark`/`PlayerBrand` components in `HostView.tsx`/`PlayerView.tsx` and `RoundTitleCard.tsx` apply `text-transform: none` on these specific spans to override the surrounding uppercase display font.
+
 **Round → theme mapping** (in `getThemeForRound()`): rounds 1 & 2 → `neutral` (the "external" rounds), round 3 → `qmusic`, round 4 → `joe` — matching the canonical round structure in `qj-quiz-content.json`. Lobby phase uses `neutral`.
 
 **Visual design system (redesign of 11 June 2026) — dark premium base, brand color as signature accent:**
@@ -49,6 +51,7 @@ Both servers must run simultaneously for local development. The Vite frontend co
 - `PREV_QUESTION` (host): question/reveal→previous question (resets answers, does not undo scores)
 - `JUMP_TO_QUESTION` (host): jumps to any question index directly (resets answers, does not undo scores)
 - `NEXT_ROUND` (host): leaderboard→question (increments both `currentQuestion` and `currentRound`)
+- `GO_TO_LOBBY` (host): any phase→lobby, resets `currentQuestion`/`currentRound`/`answers` but **keeps `teams` and scores** — use to reset the stage screen between sessions without losing points (contrast with `RESET`, which wipes teams too)
 - `ROUND_END_INDICES = [4, 9, 14]` (0-indexed last questions of rounds 1–3)
 
 **Round title card:** `App.tsx` watches `gameState.phase` and `gameState.currentRound` via refs to detect `lobby→question` (round 1 start) and `leaderboard→question` (new round) transitions, then overlays `RoundTitleCard`. On player screens it auto-dismisses after 3.5 s. On the host screen it stays open and shows a "▶ Start muziek" button that triggers the round energizer (see below). Titles/subtitles come from `ROUND_TITLES`/`ROUND_SUBTITLES` in `src/data/questions.ts`.
@@ -64,6 +67,8 @@ Both servers must run simultaneously for local development. The Vite frontend co
 **Player access code:** Client-side only check in `Lobby.tsx` — players must enter a code before they see the team name form. Default code: `qjquiz` (overridable via `VITE_ACCESS_CODE` env var at build time). Granted state stored in `sessionStorage` (`qj-access-granted`). Prevents accidental public access without blocking reconnects.
 
 **Team identity:** Each browser tab generates a stable `teamId` stored in `sessionStorage` (`qj-team-id`). Reconnecting clients rejoin with the same ID (idempotent `JOIN` handler). `onConnect` immediately sends the current `GameState` to the new socket, so late-joiners and reconnects sync without a separate request. PartyKit room name: `'qj-quiz-2025'` (hardcoded in `useGameSocket.ts`).
+
+**Lobby joined-state:** `Lobby.tsx` derives `joined` from `gameState.teams` (`isInTeams`), not local-only state — so if the server no longer knows the team (e.g. after `RESET`), the name form reappears automatically. A `pendingJoin` flag bridges the gap between sending `JOIN` and the broadcast echoing back.
 
 **Answer behavior:** Players can change their answer freely until the host triggers reveal. `SUBMIT_ANSWER` on the server overwrites any existing answer for that team. On reveal, a correct/incorrect overlay appears on the player's answer area (`player-reveal-overlay` in `PlayerView.css`): correct shows "Goed! / +100 punten", incorrect shows only "Fout" (no sub-text). The explanation text is host-only and never shown to players.
 
