@@ -123,6 +123,40 @@
             overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:.95}
   .day.first{box-shadow:inset 2px 0 0 var(--ring)}
   .day.today{border-color:var(--ink);box-shadow:0 0 0 2px var(--panel),0 0 0 3px var(--ink)}
+  .cal-tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .seg{display:inline-flex;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:2px}
+  .seg button{border:none;background:transparent;color:var(--muted);font:inherit;font-size:13px;
+              font-weight:500;padding:5px 13px;border-radius:999px;cursor:pointer}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#fff}
+  .monthnav{display:flex;align-items:center;justify-content:space-between;gap:12px;
+            padding:18px 18px 0}
+  .monthnav h3{font-size:20px;text-transform:capitalize}
+  .monthnav .btn{padding:6px 13px}
+  .monthnav .btn[disabled]{opacity:.35;cursor:default}
+  .monthnav .btn[disabled]:hover{background:var(--panel)}
+  .bigcal{padding:12px 18px 18px}
+  .bigcal .dow{gap:6px;margin-bottom:6px}
+  .bigcal .dow span{font-size:11px}
+  .biggrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+  .bigday{min-height:92px;border-radius:10px;padding:7px 8px;background:var(--bg);
+          border:1px solid var(--line);display:flex;flex-direction:column;gap:4px;overflow:hidden}
+  .bigday.empty{background:transparent;border-color:transparent}
+  .bigday .n{font-size:15px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+  .bigday .who{font-size:12px;font-weight:600;line-height:1.2;overflow-wrap:anywhere}
+  .bigday .tag{font-size:10px;text-transform:uppercase;letter-spacing:.06em;opacity:.8;margin-top:auto}
+  .bigday.trip{border-color:transparent;color:#fff}
+  .bigday.trip .n{color:#fff;opacity:.9}
+  .bigday.gapday{background:repeating-linear-gradient(135deg,var(--gap-b) 0 6px,var(--gap-a) 6px 12px);
+                 border-style:dashed}
+  .bigday.gapday .who{color:var(--muted);font-weight:500}
+  .bigday.today{outline:2px solid var(--ink);outline-offset:1px}
+  @media (max-width:640px){
+    .biggrid{gap:3px}
+    .bigday{min-height:64px;padding:5px;border-radius:8px}
+    .bigday .n{font-size:13px}
+    .bigday .who{font-size:10px}
+    .bigday .tag{display:none}
+  }
   .legend{display:flex;flex-wrap:wrap;gap:10px;padding:0 18px 18px}
   .legend span{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
   .legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
@@ -175,7 +209,17 @@
     </div>
 
     <div class="panel">
-      <div class="cal-head"><h2>Kalender</h2><span style="font-size:13px;color:var(--muted)" id="cal-note"></span></div>
+      <div class="cal-head">
+        <h2>Kalender</h2>
+        <div class="cal-tools">
+          <span style="font-size:13px;color:var(--muted)" id="cal-note"></span>
+          <div class="seg" role="group" aria-label="Weergave">
+            <button type="button" id="v-overzicht" aria-pressed="true">Overzicht</button>
+            <button type="button" id="v-maand" aria-pressed="false">Per maand</button>
+          </div>
+        </div>
+      </div>
+      <div id="monthnav"></div>
       <div class="months" id="calendar"></div>
       <div class="legend" id="legend"></div>
     </div>
@@ -398,74 +442,167 @@
   }
 
   /* ---------- kalender ---------- */
-  function renderCalendar(sched){
-    var cal = document.getElementById("calendar");
-    var legend = document.getElementById("legend");
-    cal.innerHTML = ""; legend.innerHTML = "";
-    document.getElementById("cal-note").textContent = sched.open ? nights(sched.open) + " nog open" : "";
+  var VIEWKEY = "sabbatical-view";
+  var viewMode = "overzicht", monthCursor = null;
+  try{ if(localStorage.getItem(VIEWKEY) === "maand") viewMode = "maand"; }catch(e){}
 
-    if(!sched.items.length){
-      cal.innerHTML = '<p class="empty-note">Voeg een stop toe om de kalender te vullen.</p>';
-      return;
-    }
+  function setView(v){
+    viewMode = v;
+    try{ localStorage.setItem(VIEWKEY, v); }catch(e){}
+    render();
+  }
+  document.getElementById("v-overzicht").addEventListener("click", function(){ setView("overzicht"); });
+  document.getElementById("v-maand").addEventListener("click", function(){ setView("maand"); });
 
+  function dayMap(sched){
     var map = {};
     sched.items.forEach(function(it){
       for(var d = new Date(it.from.getTime()); d <= it.to; d = addDays(d,1)) map[ymd(d)] = it;
     });
+    return map;
+  }
+  function monthStart(d){ return new Date(d.getFullYear(), d.getMonth(), 1, 12); }
+  function isSameMonth(a,b){ return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth(); }
+  function monthLabel(d){ return MONTHS[d.getMonth()] + " " + d.getFullYear(); }
+  function weekdayRow(){
+    var dow = document.createElement("div"); dow.className = "dow";
+    DOW.forEach(function(d){ var s = document.createElement("span"); s.textContent = d; dow.appendChild(s); });
+    return dow;
+  }
+  function leadingBlanks(m){ return (new Date(m.getFullYear(), m.getMonth(), 1, 12).getDay() + 6) % 7; }
+  function daysInMonth(m){ return new Date(m.getFullYear(), m.getMonth()+1, 0, 12).getDate(); }
 
-    var today = new Date(); today.setHours(12,0,0,0);
-    var cur = new Date(sched.start.getFullYear(), sched.start.getMonth(), 1, 12);
-    var last = new Date(sched.end.getFullYear(), sched.end.getMonth(), 1, 12);
+  function renderCalendar(sched){
+    var cal = document.getElementById("calendar");
+    var nav = document.getElementById("monthnav");
+    var legend = document.getElementById("legend");
+    cal.innerHTML = ""; nav.innerHTML = ""; legend.innerHTML = "";
+    document.getElementById("cal-note").textContent = sched.open ? nights(sched.open) + " nog open" : "";
+    document.getElementById("v-overzicht").setAttribute("aria-pressed", viewMode === "overzicht");
+    document.getElementById("v-maand").setAttribute("aria-pressed", viewMode === "maand");
 
-    while(cur <= last){
-      var m = document.createElement("div"); m.className = "month";
-      var h = document.createElement("h3");
-      h.textContent = MONTHS[cur.getMonth()] + " " + cur.getFullYear();
-      m.appendChild(h);
-
-      var dow = document.createElement("div"); dow.className = "dow";
-      DOW.forEach(function(d){ var s = document.createElement("span"); s.textContent = d; dow.appendChild(s); });
-      m.appendChild(dow);
-
-      var grid = document.createElement("div"); grid.className = "grid";
-      var first = new Date(cur.getFullYear(), cur.getMonth(), 1, 12);
-      var lead = (first.getDay() + 6) % 7;
-      for(var i=0;i<lead;i++){ var e = document.createElement("div"); e.className="day empty"; grid.appendChild(e); }
-
-      var dim = new Date(cur.getFullYear(), cur.getMonth()+1, 0, 12).getDate();
-      for(var day=1; day<=dim; day++){
-        var d = new Date(cur.getFullYear(), cur.getMonth(), day, 12);
-        var cell = document.createElement("div"); cell.className = "day";
-        var num = document.createElement("span"); num.textContent = day; cell.appendChild(num);
-        var it = map[ymd(d)];
-        if(it){
-          var isFirst = ymd(d) === ymd(it.from);
-          var label;
-          if(it.type === "gap"){
-            cell.classList.add("gapday");
-            label = "te plannen";
-            cell.title = "Nog te plannen · " + fmtLong(d);
-          }else{
-            cell.classList.add("trip");
-            cell.style.background = it.stop.color;
-            label = it.stop.name || "—";
-            cell.title = (it.stop.name || "Stop") + (it.stop.fixed ? " (vast)" : "") + " · " + fmtLong(d);
-          }
-          if(isFirst){
-            cell.classList.add("first");
-            var lbl = document.createElement("span"); lbl.className = "lbl"; lbl.textContent = label;
-            cell.appendChild(lbl);
-          }
-        }
-        if(ymd(d) === ymd(today)) cell.classList.add("today");
-        grid.appendChild(cell);
-      }
-      m.appendChild(grid);
-      cal.appendChild(m);
-      cur = new Date(cur.getFullYear(), cur.getMonth()+1, 1, 12);
+    if(!sched.items.length){
+      cal.className = "months";
+      cal.innerHTML = '<p class="empty-note">Voeg een stop toe om de kalender te vullen.</p>';
+      return;
     }
 
+    var map = dayMap(sched);
+    var today = new Date(); today.setHours(12,0,0,0);
+    var firstM = monthStart(sched.start), lastM = monthStart(sched.end);
+
+    if(viewMode === "maand"){
+      /* houd de getoonde maand binnen de reis; start bij vandaag als dat kan */
+      if(!monthCursor) monthCursor = (today >= firstM && today <= sched.end) ? monthStart(today) : firstM;
+      if(monthCursor < firstM) monthCursor = firstM;
+      if(monthCursor > lastM) monthCursor = lastM;
+      renderMonthNav(nav, firstM, lastM);
+      cal.className = "bigcal";
+      cal.appendChild(weekdayRow());
+      cal.appendChild(bigMonth(monthCursor, map, sched, today));
+    }else{
+      cal.className = "months";
+      var cur = new Date(firstM.getTime());
+      while(cur <= lastM){
+        cal.appendChild(smallMonth(cur, map, today));
+        cur = new Date(cur.getFullYear(), cur.getMonth()+1, 1, 12);
+      }
+    }
+    renderLegend(legend, sched);
+  }
+
+  function renderMonthNav(nav, firstM, lastM){
+    nav.className = "monthnav";
+    var prev = document.createElement("button");
+    prev.type = "button"; prev.className = "btn"; prev.textContent = "‹";
+    prev.title = "Vorige maand";
+    prev.disabled = isSameMonth(monthCursor, firstM);
+    prev.addEventListener("click", function(){
+      monthCursor = new Date(monthCursor.getFullYear(), monthCursor.getMonth()-1, 1, 12); render();
+    });
+    var h = document.createElement("h3"); h.textContent = monthLabel(monthCursor);
+    var next = document.createElement("button");
+    next.type = "button"; next.className = "btn"; next.textContent = "›";
+    next.title = "Volgende maand";
+    next.disabled = isSameMonth(monthCursor, lastM);
+    next.addEventListener("click", function(){
+      monthCursor = new Date(monthCursor.getFullYear(), monthCursor.getMonth()+1, 1, 12); render();
+    });
+    nav.appendChild(prev); nav.appendChild(h); nav.appendChild(next);
+  }
+
+  function bigMonth(m, map, sched, today){
+    var grid = document.createElement("div"); grid.className = "biggrid";
+    var lead = leadingBlanks(m), dim = daysInMonth(m), i;
+    for(i=0;i<lead;i++){ var e = document.createElement("div"); e.className = "bigday empty"; grid.appendChild(e); }
+    for(var day=1; day<=dim; day++){
+      var d = new Date(m.getFullYear(), m.getMonth(), day, 12);
+      var cell = document.createElement("div"); cell.className = "bigday";
+      var n = document.createElement("span"); n.className = "n"; n.textContent = day;
+      cell.appendChild(n);
+      var it = map[ymd(d)];
+      if(it){
+        var who = document.createElement("span"); who.className = "who";
+        var tag = document.createElement("span"); tag.className = "tag";
+        if(it.type === "gap"){
+          cell.classList.add("gapday");
+          who.textContent = "nog te plannen";
+          tag.textContent = "vrij";
+        }else{
+          cell.classList.add("trip");
+          cell.style.background = it.stop.color;
+          who.textContent = it.stop.name || "naamloze stop";
+          var isFirst = ymd(d) === ymd(it.from);
+          var isLast = ymd(d) === ymd(it.to);
+          tag.textContent = isFirst ? "aankomst" : (isLast ? "laatste nacht" : "dag " + dayNr(sched, d));
+        }
+        cell.appendChild(who); cell.appendChild(tag);
+      }
+      if(ymd(d) === ymd(today)) cell.classList.add("today");
+      grid.appendChild(cell);
+    }
+    return grid;
+  }
+
+  function smallMonth(m, map, today){
+    var wrap = document.createElement("div"); wrap.className = "month";
+    var h = document.createElement("h3"); h.textContent = monthLabel(m);
+    wrap.appendChild(h);
+    wrap.appendChild(weekdayRow());
+    var grid = document.createElement("div"); grid.className = "grid";
+    var lead = leadingBlanks(m), dim = daysInMonth(m), i;
+    for(i=0;i<lead;i++){ var e = document.createElement("div"); e.className = "day empty"; grid.appendChild(e); }
+    for(var day=1; day<=dim; day++){
+      var d = new Date(m.getFullYear(), m.getMonth(), day, 12);
+      var cell = document.createElement("div"); cell.className = "day";
+      var num = document.createElement("span"); num.textContent = day; cell.appendChild(num);
+      var it = map[ymd(d)];
+      if(it){
+        var label;
+        if(it.type === "gap"){
+          cell.classList.add("gapday");
+          label = "te plannen";
+          cell.title = "Nog te plannen · " + fmtLong(d);
+        }else{
+          cell.classList.add("trip");
+          cell.style.background = it.stop.color;
+          label = it.stop.name || "—";
+          cell.title = (it.stop.name || "Stop") + (it.stop.fixed ? " (vast)" : "") + " · " + fmtLong(d);
+        }
+        if(ymd(d) === ymd(it.from)){
+          cell.classList.add("first");
+          var lbl = document.createElement("span"); lbl.className = "lbl"; lbl.textContent = label;
+          cell.appendChild(lbl);
+        }
+      }
+      if(ymd(d) === ymd(today)) cell.classList.add("today");
+      grid.appendChild(cell);
+    }
+    wrap.appendChild(grid);
+    return wrap;
+  }
+
+  function renderLegend(legend, sched){
     sched.items.forEach(function(it){
       if(it.type === "gap") return;
       var s = document.createElement("span");

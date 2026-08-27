@@ -17,7 +17,11 @@ Open `index.html` in je browser (dubbelklikken is genoeg — geen server, geen i
   nachten, dan verschijnt een waarschuwing bij de vaste stop die je overloopt.
 - **Kleur** per stop kies je via het gekleurde balkje links.
 - **Volgorde** wijzig je door een stop te verslepen (sleepgreep ⠿ rechts).
-- De **kalender** rechts toont alle maanden van de reis; elke dag krijgt de kleur van de stop
+- De **kalender** heeft twee weergaven, om te wisselen met de knoppen rechtsboven:
+  **Overzicht** (alle maanden naast elkaar, kleine vakjes) en **Per maand** (één maand groot,
+  met in elk dagvak de naam van de stop en of het een aankomst of laatste nacht is; blader met ‹ ›).
+  De gekozen weergave wordt onthouden.
+- Het overzicht toont alle maanden van de reis; elke dag krijgt de kleur van de stop
   waar je dan bent, met de naam op de eerste dag. Gestreepte dagen zijn nog niet ingevuld.
 
 ## Het beginplan
