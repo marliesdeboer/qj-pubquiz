@@ -7,12 +7,25 @@ Eén los HTML-bestand om een reis van ~2 maanden te plannen op stops en aantal d
 Open `index.html` in je browser (dubbelklikken is genoeg — geen server, geen installatie).
 
 - **Vertrekdatum** bovenaan bepaalt waar de reis begint.
-- **Stops** voeg je toe met "+ Stop toevoegen". Per stop vul je een naam en het aantal dagen in
+- **Stops** voeg je toe met "+ Stop toevoegen". Per stop vul je een naam en het aantal **nachten** in
   (met − / + of door het getal te typen). Alle aankomst- en vertrekdatums schuiven automatisch mee.
+- **Vaste datums** zet je vast met de 📌 naast een stop: die stop blijft op zijn datum staan, wat je
+  ervoor ook verandert. Zo staan het begin (20 aug) en de terugreis (boot 5 okt, Lyon 9 okt, laatste
+  rijdag 13 okt) al vast.
+- **Nog te plannen**: de gestreepte blokken tussen twee vaste stops zijn de dagen die nog vrij zijn.
+  Met "+ stop hier" plaats je daar een nieuwe stop; het gat krimpt automatisch mee. Plan je te veel
+  nachten, dan verschijnt een waarschuwing bij de vaste stop die je overloopt.
 - **Kleur** per stop kies je via het gekleurde balkje links.
 - **Volgorde** wijzig je door een stop te verslepen (sleepgreep ⠿ rechts).
 - De **kalender** rechts toont alle maanden van de reis; elke dag krijgt de kleur van de stop
-  waar je dan bent, met de naam op de eerste dag.
+  waar je dan bent, met de naam op de eerste dag. Gestreepte dagen zijn nog niet ingevuld.
+
+## Het beginplan
+
+Bij "Terug naar beginplan" (en bij een lege browser) staat de reis van 2027 klaar:
+Karlsruhe 2 n · Como 1 n · Camping Pian d'Amora 7 n · Florence 4 n · **32 nachten te plannen** ·
+boot Palermo–Genua 5 okt · **3 nachten te plannen** · Lyon 9–13 okt · laatste rijdag 13 okt ·
+thuis 14 oktober.
 
 ## Bewaren
 

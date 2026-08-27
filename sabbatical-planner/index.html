@@ -11,11 +11,13 @@
   :root{
     --bg:#f6f4f0; --panel:#ffffff; --ink:#1b1a18; --muted:#77726b;
     --line:#e4e0d8; --accent:#1f6f5c; --accent-soft:#e6f0ed; --danger:#b0402f;
+    --gap-a:#ded9d0; --gap-b:#eae6df;
     --radius:14px; --shadow:0 1px 2px rgba(0,0,0,.05),0 8px 24px rgba(0,0,0,.05);
   }
   @media (prefers-color-scheme: dark){
     :root{ --bg:#14161a; --panel:#1c1f25; --ink:#eceae6; --muted:#9a958d;
            --line:#2c313a; --accent:#57bfa3; --accent-soft:#1e3b34; --danger:#e07a67;
+           --gap-a:#2a2f37; --gap-b:#22262d;
            --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35); }
   }
   *{box-sizing:border-box}
@@ -27,17 +29,17 @@
   header.top h1{font-size:30px}
   header.top p{margin:4px 0 0;color:var(--muted);font-size:14px}
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
-  .layout{display:grid;grid-template-columns:minmax(340px,400px) 1fr;gap:22px;align-items:start}
+  .layout{display:grid;grid-template-columns:minmax(360px,420px) 1fr;gap:22px;align-items:start}
   @media (max-width:900px){ .layout{grid-template-columns:1fr} }
 
-  /* --- controls --- */
   .section{padding:18px}
   .section + .section{border-top:1px solid var(--line)}
   .section h2{font-size:17px;margin-bottom:12px}
   label.field{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px}
   input[type=date],input[type=text],input[type=number]{
-    width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;
+    padding:9px 11px;border:1px solid var(--line);border-radius:9px;
     background:var(--bg);color:var(--ink);font:inherit}
+  #start{width:100%}
   input:focus{outline:2px solid var(--accent);outline-offset:1px}
   .btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);
        font:inherit;font-weight:500;padding:8px 14px;border-radius:999px;cursor:pointer;
@@ -48,40 +50,53 @@
   .btn.primary:hover{filter:brightness(1.08)}
   .btn.ghost{border-color:transparent;color:var(--muted);padding:6px 10px}
   .btn.ghost:hover{color:var(--danger);background:transparent}
+  .btn.small{font-size:12px;padding:5px 11px}
   .btnrow{display:flex;flex-wrap:wrap;gap:8px}
 
-  /* --- stops --- */
   ul#stops{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
   li.stop{display:grid;grid-template-columns:14px 1fr auto;grid-template-rows:auto auto;
-          column-gap:10px;row-gap:2px;align-items:center;
+          column-gap:10px;row-gap:3px;align-items:center;
           padding:10px 10px 10px 8px;border:1px solid var(--line);border-radius:11px;background:var(--bg)}
   li.stop.dragging{opacity:.4}
   li.stop.dragover{outline:2px dashed var(--accent);outline-offset:2px}
-  .swatch{grid-row:1 / span 2;width:14px;height:38px;border-radius:5px;border:none;padding:0;cursor:pointer;position:relative;overflow:hidden}
+  li.stop.pinned{border-color:var(--accent)}
+  .swatch{grid-row:1 / span 2;width:14px;height:38px;border-radius:5px;border:none;padding:0;
+          cursor:pointer;position:relative;overflow:hidden}
   .swatch input{position:absolute;inset:0;opacity:0;cursor:pointer;border:0;padding:0}
   .stop-main{min-width:0}
-  .stop-main input.name{border:none;background:transparent;padding:2px 0;font-weight:600;font-size:15px}
+  .stop-main input.name{width:100%;border:none;background:transparent;padding:2px 0;font-weight:600;font-size:15px}
   .stop-main input.name:focus{outline:none;border-bottom:1px solid var(--accent)}
-  .dates{grid-column:2 / -1;font-size:12px;color:var(--muted)}
+  .dates{grid-column:2 / -1;font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;
+         align-items:center;gap:6px}
+  .dates input[type=date]{padding:2px 6px;font-size:12px;border-radius:6px}
   .stop-side{display:flex;align-items:center;gap:2px}
   .stepper{display:flex;align-items:center;gap:2px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:2px}
   .stepper button{width:24px;height:24px;border:none;background:transparent;color:var(--muted);
                   font-size:15px;line-height:1;cursor:pointer;border-radius:50%}
   .stepper button:hover{background:var(--accent-soft);color:var(--ink)}
-  .stepper input{width:38px;text-align:center;border:none;background:transparent;padding:2px 0;font-weight:600}
+  .stepper input{width:36px;text-align:center;border:none;background:transparent;padding:2px 0;font-weight:600}
   .stepper input::-webkit-outer-spin-button,.stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
   .stepper input{-moz-appearance:textfield}
-  .unit{font-size:11px;color:var(--muted);margin-right:4px}
+  .unit{font-size:11px;color:var(--muted);margin-right:2px}
+  .pin{border:none;background:transparent;cursor:pointer;font-size:13px;line-height:1;
+       padding:5px 4px;border-radius:50%;filter:grayscale(1);opacity:.45}
+  .pin:hover{opacity:.9}
+  .pin.on{filter:none;opacity:1}
   .grab{cursor:grab;color:var(--muted);padding:0 2px;user-select:none}
+  .warn{grid-column:1 / -1;font-size:12px;color:var(--danger);font-weight:500}
 
-  /* --- summary --- */
-  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
+  li.gap{display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:space-between;
+         padding:9px 12px;border:1px dashed var(--line);border-radius:11px;
+         background:repeating-linear-gradient(135deg,var(--gap-b) 0 7px,var(--gap-a) 7px 14px)}
+  li.gap .gap-txt{font-size:13px;color:var(--muted)}
+  li.gap .gap-txt b{color:var(--ink);font-weight:600}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);
          border-radius:11px;overflow:hidden;border:1px solid var(--line)}
-  .stat{background:var(--panel);padding:12px 10px;text-align:center}
-  .stat b{display:block;font-family:Fraunces,Georgia,serif;font-size:22px}
-  .stat span{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  .stat{background:var(--panel);padding:12px 6px;text-align:center}
+  .stat b{display:block;font-family:Fraunces,Georgia,serif;font-size:21px}
+  .stat span{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
 
-  /* --- calendar --- */
   .cal-head{display:flex;justify-content:space-between;align-items:center;padding:18px 18px 0}
   .months{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;padding:18px}
   .month h3{font-size:16px;margin-bottom:8px;text-transform:capitalize}
@@ -93,13 +108,16 @@
        border:1px solid transparent;overflow:hidden}
   .day.empty{background:transparent}
   .day.trip{color:#fff;font-weight:600}
-  .day.trip .lbl{font-size:8px;font-weight:600;line-height:1.05;max-width:100%;padding:0 2px;
-                 overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:.95}
+  .day.gapday{background:repeating-linear-gradient(135deg,var(--gap-b) 0 5px,var(--gap-a) 5px 10px);
+              color:var(--muted);font-weight:500}
+  .day .lbl{font-size:8px;font-weight:600;line-height:1.05;max-width:100%;padding:0 2px;
+            overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:.95}
   .day.first{box-shadow:inset 2px 0 0 rgba(255,255,255,.85)}
   .day.today{border-color:var(--ink)}
   .legend{display:flex;flex-wrap:wrap;gap:10px;padding:0 18px 18px}
   .legend span{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
   .legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+  .legend i.gap{background:repeating-linear-gradient(135deg,var(--gap-b) 0 4px,var(--gap-a) 4px 8px)}
   .empty-note{padding:30px 18px;color:var(--muted);text-align:center}
   footer{margin-top:26px;color:var(--muted);font-size:12px;text-align:center}
   @media print{
@@ -115,7 +133,7 @@
   <header class="top">
     <div>
       <h1>Sabbatical reisplanner</h1>
-      <p id="subtitle">Plan je stops op aantal dagen — de kalender vult zich vanzelf.</p>
+      <p id="subtitle">Zet nachten per stop; zet vaste data vast met 📌. De gestreepte blokken zijn nog te plannen.</p>
     </div>
     <div class="btnrow no-print">
       <button class="btn" id="print">Printen</button>
@@ -138,15 +156,16 @@
         <ul id="stops"></ul>
         <div class="btnrow" style="margin-top:12px">
           <button class="btn primary" id="add">+ Stop toevoegen</button>
-          <button class="btn ghost" id="reset">Alles wissen</button>
+          <button class="btn ghost" id="reset">Terug naar beginplan</button>
         </div>
       </div>
 
       <div class="section">
         <div class="stats">
-          <div class="stat"><b id="s-days">0</b><span>dagen</span></div>
+          <div class="stat"><b id="s-total">0</b><span>nachten</span></div>
+          <div class="stat"><b id="s-planned">0</b><span>gepland</span></div>
+          <div class="stat"><b id="s-open">0</b><span>te plannen</span></div>
           <div class="stat"><b id="s-stops">0</b><span>stops</span></div>
-          <div class="stat"><b id="s-weeks">0</b><span>weken</span></div>
         </div>
         <p style="margin:10px 0 0;font-size:13px;color:var(--muted)" id="range"></p>
       </div>
@@ -165,65 +184,93 @@
 <script>
 (function(){
   "use strict";
-  var KEY = "sabbatical-planner-v1";
+  var KEY = "sabbatical-planner-v2";
   var PALETTE = ["#1f6f5c","#c2703a","#3f6ea8","#8b5a9e","#b0402f","#5a8f3a","#c99a2e","#3a8f8f","#a34f76","#5f6b7a"];
   var DOW = ["ma","di","wo","do","vr","za","zo"];
   var MONTHS = ["januari","februari","maart","april","mei","juni","juli","augustus","september","oktober","november","december"];
 
-  var state = load() || defaults();
-
-  /* ---------- date helpers (local, DST-safe) ---------- */
+  /* ---------- date helpers (local noon, DST-safe) ---------- */
   function ymd(d){
     return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
   }
   function parse(s){ var p = String(s).split("-"); return new Date(+p[0], +p[1]-1, +p[2], 12, 0, 0); }
   function addDays(d, n){ var x = new Date(d.getTime()); x.setDate(x.getDate()+n); x.setHours(12,0,0,0); return x; }
+  function diffDays(a, b){ return Math.round((b.getTime() - a.getTime()) / 86400000); }
   function fmt(d){ return d.getDate() + " " + MONTHS[d.getMonth()].slice(0,3); }
   function fmtLong(d){ return d.getDate() + " " + MONTHS[d.getMonth()] + " " + d.getFullYear(); }
+  function nights(n){ return n + (n === 1 ? " nacht" : " nachten"); }
+  function uid(){ return Math.random().toString(36).slice(2,10); }
+  function clampDays(n){ n = Math.round(Number(n)); if(!isFinite(n) || n < 1) n = 1; if(n > 365) n = 365; return n; }
 
+  /* ---------- beginplan ---------- */
   function defaults(){
-    var t = new Date(); t.setHours(12,0,0,0);
     return {
-      start: ymd(t),
+      start: "2027-08-20",
       stops: [
-        { id: uid(), name: "Stop 1", days: 14, color: PALETTE[0] },
-        { id: uid(), name: "Stop 2", days: 21, color: PALETTE[1] },
-        { id: uid(), name: "Stop 3", days: 25, color: PALETTE[2] }
+        { id: uid(), name: "Karlsruhe",              days: 2, color: PALETTE[0], fixed: "2027-08-20" },
+        { id: uid(), name: "Como",                   days: 1, color: PALETTE[1], fixed: null },
+        { id: uid(), name: "Camping Pian d'Amora",   days: 7, color: PALETTE[2], fixed: null },
+        { id: uid(), name: "Florence",               days: 4, color: PALETTE[3], fixed: null },
+        { id: uid(), name: "Boot Palermo → Genua",   days: 1, color: PALETTE[4], fixed: "2027-10-05" },
+        { id: uid(), name: "Lyon",                   days: 4, color: PALETTE[5], fixed: "2027-10-09" },
+        { id: uid(), name: "Onderweg naar huis",     days: 1, color: PALETTE[6], fixed: "2027-10-13" }
       ]
     };
   }
-  function uid(){ return Math.random().toString(36).slice(2,10); }
 
   function load(){
     try{
       var raw = localStorage.getItem(KEY);
       if(!raw) return null;
       var d = JSON.parse(raw);
-      if(!d || !Array.isArray(d.stops) || !d.start) return null;
-      d.stops = d.stops.map(function(s){
-        return { id: s.id || uid(), name: String(s.name || ""), days: clampDays(s.days), color: s.color || PALETTE[0] };
-      });
-      return d;
+      return normalise(d);
     }catch(e){ return null; }
   }
-  function save(){
-    try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+  function normalise(d){
+    if(!d || !Array.isArray(d.stops) || !d.start) return null;
+    return {
+      start: d.start,
+      stops: d.stops.map(function(s){
+        return { id: s.id || uid(), name: String(s.name || ""), days: clampDays(s.days),
+                 color: s.color || PALETTE[0], fixed: s.fixed || null };
+      })
+    };
   }
-  function clampDays(n){ n = Math.round(Number(n)); if(!isFinite(n) || n < 1) n = 1; if(n > 365) n = 365; return n; }
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
 
-  /* ---------- derived ---------- */
+  var state = load() || defaults();
+
+  /* ---------- schedule ---------- */
+  /* Walks the stops in order. A stop without a fixed date simply follows the
+     previous one; a pinned stop jumps to its own date and any days in between
+     become an open "nog te plannen" block. */
   function schedule(){
-    var start = parse(state.start), cursor = start, out = [];
-    state.stops.forEach(function(s){
+    var start = parse(state.start), cursor = start, items = [], open = 0, planned = 0;
+    state.stops.forEach(function(s, i){
+      var conflict = 0;
+      if(s.fixed){
+        var f = parse(s.fixed);
+        var d = diffDays(cursor, f);
+        if(d > 0){
+          items.push({ type:"gap", nights:d, from:cursor, to:addDays(f,-1), before:i });
+          open += d;
+        }else if(d < 0){
+          conflict = -d;
+        }
+        cursor = f;
+      }
       var from = cursor, to = addDays(cursor, s.days - 1);
-      out.push({ stop: s, from: from, to: to });
+      items.push({ type:"stop", stop:s, index:i, from:from, to:to, conflict:conflict });
+      planned += s.days;
       cursor = addDays(to, 1);
     });
-    return { start: start, legs: out, end: out.length ? out[out.length-1].to : null,
-             total: state.stops.reduce(function(a,s){ return a + s.days; }, 0) };
+    var end = items.length ? items[items.length-1].to : null;
+    return { start:start, items:items, end:end, open:open, planned:planned,
+             total: end ? diffDays(start, end) + 1 : 0, home: end ? addDays(end,1) : null };
   }
+  function dayNr(sched, d){ return diffDays(sched.start, d) + 1; }
 
-  /* ---------- rendering ---------- */
+  /* ---------- stop list ---------- */
   var stopsEl = document.getElementById("stops");
 
   function renderStops(sched){
@@ -235,64 +282,108 @@
       stopsEl.appendChild(p);
       return;
     }
-    sched.legs.forEach(function(leg, i){
-      var s = leg.stop;
-      var li = document.createElement("li");
-      li.className = "stop";
-      li.draggable = true;
-      li.dataset.id = s.id;
-
-      var sw = document.createElement("label");
-      sw.className = "swatch";
-      sw.style.background = s.color;
-      sw.title = "Kleur kiezen";
-      var color = document.createElement("input");
-      color.type = "color"; color.value = s.color;
-      color.addEventListener("input", function(){ s.color = color.value; sw.style.background = color.value; commit(); });
-      sw.appendChild(color);
-
-      var main = document.createElement("div");
-      main.className = "stop-main";
-      var name = document.createElement("input");
-      name.type = "text"; name.className = "name"; name.value = s.name;
-      name.placeholder = "Bestemming";
-      name.addEventListener("input", function(){ s.name = name.value; save(); renderCalendar(schedule()); });
-      var dates = document.createElement("div");
-      dates.className = "dates";
-      dates.textContent = fmt(leg.from) + " – " + fmt(leg.to) + "  ·  dag " + startDayNr(sched, i) + "–" + endDayNr(sched, i);
-      main.appendChild(name);
-
-      var side = document.createElement("div");
-      side.className = "stop-side";
-      var step = document.createElement("div");
-      step.className = "stepper";
-      var minus = document.createElement("button"); minus.type="button"; minus.textContent="−"; minus.title="Dag eraf";
-      var num = document.createElement("input"); num.type="number"; num.min="1"; num.value = s.days;
-      var plus = document.createElement("button"); plus.type="button"; plus.textContent="+"; plus.title="Dag erbij";
-      minus.addEventListener("click", function(){ s.days = clampDays(s.days - 1); commit(); });
-      plus.addEventListener("click", function(){ s.days = clampDays(s.days + 1); commit(); });
-      num.addEventListener("change", function(){ s.days = clampDays(num.value); commit(); });
-      step.appendChild(minus); step.appendChild(num); step.appendChild(plus);
-      var unit = document.createElement("span"); unit.className="unit"; unit.textContent="dgn";
-      var del = document.createElement("button");
-      del.type="button"; del.className="btn ghost"; del.textContent="✕"; del.title="Stop verwijderen";
-      del.addEventListener("click", function(){
-        state.stops = state.stops.filter(function(x){ return x.id !== s.id; }); commit();
-      });
-      var grab = document.createElement("span");
-      grab.className = "grab"; grab.textContent = "⠿"; grab.title = "Sleep om te verplaatsen";
-      side.appendChild(step); side.appendChild(unit); side.appendChild(del); side.appendChild(grab);
-
-      li.appendChild(sw); li.appendChild(main); li.appendChild(side); li.appendChild(dates);
-      wireDrag(li);
-      stopsEl.appendChild(li);
+    sched.items.forEach(function(it){
+      stopsEl.appendChild(it.type === "gap" ? gapRow(it) : stopRow(it, sched));
     });
   }
 
-  function startDayNr(sched, i){
-    var n = 1; for(var k=0;k<i;k++) n += sched.legs[k].stop.days; return n;
+  function gapRow(it){
+    var li = document.createElement("li");
+    li.className = "gap";
+    var txt = document.createElement("div");
+    txt.className = "gap-txt";
+    txt.innerHTML = "Nog te plannen · <b>" + nights(it.nights) + "</b> · " + fmt(it.from) + " – " + fmt(it.to);
+    var btn = document.createElement("button");
+    btn.className = "btn small"; btn.type = "button"; btn.textContent = "+ stop hier";
+    btn.addEventListener("click", function(){
+      state.stops.splice(it.before, 0, {
+        id: uid(), name: "", days: Math.min(it.nights, 3),
+        color: PALETTE[state.stops.length % PALETTE.length], fixed: null
+      });
+      commit();
+      var inputs = stopsEl.querySelectorAll("input.name");
+      if(inputs[it.before]) inputs[it.before].focus();
+    });
+    li.appendChild(txt); li.appendChild(btn);
+    return li;
   }
-  function endDayNr(sched, i){ return startDayNr(sched, i) + sched.legs[i].stop.days - 1; }
+
+  function stopRow(it, sched){
+    var s = it.stop;
+    var li = document.createElement("li");
+    li.className = "stop" + (s.fixed ? " pinned" : "");
+    li.draggable = true;
+    li.dataset.id = s.id;
+
+    var sw = document.createElement("label");
+    sw.className = "swatch"; sw.style.background = s.color; sw.title = "Kleur kiezen";
+    var color = document.createElement("input");
+    color.type = "color"; color.value = s.color;
+    color.addEventListener("input", function(){ s.color = color.value; sw.style.background = color.value; save(); renderCalendar(schedule()); });
+    sw.appendChild(color);
+
+    var main = document.createElement("div");
+    main.className = "stop-main";
+    var name = document.createElement("input");
+    name.type = "text"; name.className = "name"; name.value = s.name; name.placeholder = "Bestemming";
+    name.title = s.name;
+    name.addEventListener("input", function(){ s.name = name.value; name.title = name.value; save(); renderCalendar(schedule()); });
+    main.appendChild(name);
+
+    var side = document.createElement("div");
+    side.className = "stop-side";
+    var step = document.createElement("div"); step.className = "stepper";
+    var minus = document.createElement("button"); minus.type="button"; minus.textContent="−"; minus.title="Nacht eraf";
+    var num = document.createElement("input"); num.type="number"; num.min="1"; num.value = s.days;
+    var plus = document.createElement("button"); plus.type="button"; plus.textContent="+"; plus.title="Nacht erbij";
+    minus.addEventListener("click", function(){ s.days = clampDays(s.days - 1); commit(); });
+    plus.addEventListener("click", function(){ s.days = clampDays(s.days + 1); commit(); });
+    num.addEventListener("change", function(){ s.days = clampDays(num.value); commit(); });
+    step.appendChild(minus); step.appendChild(num); step.appendChild(plus);
+    var unit = document.createElement("span"); unit.className="unit"; unit.textContent="n";
+    unit.title = "nachten";
+
+    var pin = document.createElement("button");
+    pin.type = "button"; pin.className = "pin" + (s.fixed ? " on" : ""); pin.textContent = "📌";
+    pin.title = s.fixed ? "Datum losmaken" : "Datum vastzetten";
+    pin.addEventListener("click", function(){
+      s.fixed = s.fixed ? null : ymd(it.from);
+      commit();
+    });
+
+    var del = document.createElement("button");
+    del.type="button"; del.className="btn ghost"; del.textContent="✕"; del.title="Stop verwijderen";
+    del.addEventListener("click", function(){
+      state.stops = state.stops.filter(function(x){ return x.id !== s.id; }); commit();
+    });
+    var grab = document.createElement("span");
+    grab.className = "grab"; grab.textContent = "⠿"; grab.title = "Sleep om te verplaatsen";
+    side.appendChild(step); side.appendChild(unit); side.appendChild(pin); side.appendChild(del); side.appendChild(grab);
+
+    var dates = document.createElement("div");
+    dates.className = "dates";
+    if(s.fixed){
+      var fx = document.createElement("input");
+      fx.type = "date"; fx.value = s.fixed; fx.title = "Vaste aankomstdatum";
+      fx.addEventListener("change", function(){ if(fx.value){ s.fixed = fx.value; commit(); } });
+      dates.appendChild(fx);
+    }
+    var txt = document.createElement("span");
+    txt.textContent = (s.fixed ? "→ " : "") + fmt(it.from) + " – " + fmt(it.to) +
+                      " · " + nights(s.days) + " · dag " + dayNr(sched, it.from) + "–" + dayNr(sched, it.to);
+    dates.appendChild(txt);
+
+    li.appendChild(sw); li.appendChild(main); li.appendChild(side); li.appendChild(dates);
+
+    if(it.conflict){
+      var w = document.createElement("div");
+      w.className = "warn";
+      w.textContent = "⚠ " + nights(it.conflict) + " te veel ervoor — dit loopt over de vaste datum heen.";
+      li.appendChild(w);
+    }
+    wireDrag(li);
+    return li;
+  }
 
   /* drag & drop reordering */
   var dragId = null;
@@ -316,24 +407,22 @@
     });
   }
 
-  /* calendar */
+  /* ---------- calendar ---------- */
   function renderCalendar(sched){
     var cal = document.getElementById("calendar");
     var legend = document.getElementById("legend");
     cal.innerHTML = ""; legend.innerHTML = "";
-    document.getElementById("cal-note").textContent = "";
+    document.getElementById("cal-note").textContent = sched.open
+      ? nights(sched.open) + " nog open" : "";
 
-    if(!sched.legs.length){
+    if(!sched.items.length){
       cal.innerHTML = '<p class="empty-note">Voeg een stop toe om de kalender te vullen.</p>';
       return;
     }
 
-    /* day -> leg map */
     var map = {};
-    sched.legs.forEach(function(leg){
-      for(var d = new Date(leg.from.getTime()); d <= leg.to; d = addDays(d,1)){
-        map[ymd(d)] = leg;
-      }
+    sched.items.forEach(function(it){
+      for(var d = new Date(it.from.getTime()); d <= it.to; d = addDays(d,1)) map[ymd(d)] = it;
     });
 
     var today = new Date(); today.setHours(12,0,0,0);
@@ -359,19 +448,26 @@
       for(var day=1; day<=dim; day++){
         var d = new Date(cur.getFullYear(), cur.getMonth(), day, 12);
         var cell = document.createElement("div"); cell.className = "day";
-        var leg = map[ymd(d)];
         var num = document.createElement("span"); num.textContent = day; cell.appendChild(num);
-        if(leg){
-          cell.classList.add("trip");
-          cell.style.background = leg.stop.color;
-          var isFirst = ymd(d) === ymd(leg.from);
+        var it = map[ymd(d)];
+        if(it){
+          var isFirst = ymd(d) === ymd(it.from);
+          var label;
+          if(it.type === "gap"){
+            cell.classList.add("gapday");
+            label = "te plannen";
+            cell.title = "Nog te plannen · " + fmtLong(d);
+          }else{
+            cell.classList.add("trip");
+            cell.style.background = it.stop.color;
+            label = it.stop.name || "—";
+            cell.title = (it.stop.name || "Stop") + (it.stop.fixed ? " (vast)" : "") + " · " + fmtLong(d);
+          }
           if(isFirst){
             cell.classList.add("first");
-            var lbl = document.createElement("span"); lbl.className = "lbl";
-            lbl.textContent = leg.stop.name || "—";
+            var lbl = document.createElement("span"); lbl.className = "lbl"; lbl.textContent = label;
             cell.appendChild(lbl);
           }
-          cell.title = (leg.stop.name || "Stop") + " · " + fmtLong(d);
         }
         if(ymd(d) === ymd(today)) cell.classList.add("today");
         grid.appendChild(cell);
@@ -381,21 +477,31 @@
       cur = new Date(cur.getFullYear(), cur.getMonth()+1, 1, 12);
     }
 
-    sched.legs.forEach(function(leg){
+    sched.items.forEach(function(it){
+      if(it.type === "gap") return;
       var s = document.createElement("span");
-      var i = document.createElement("i"); i.style.background = leg.stop.color;
+      var i = document.createElement("i"); i.style.background = it.stop.color;
       s.appendChild(i);
-      s.appendChild(document.createTextNode((leg.stop.name || "Naamloos") + " · " + leg.stop.days + " d"));
+      s.appendChild(document.createTextNode((it.stop.name || "Naamloos") + " · " + it.stop.days + "n" + (it.stop.fixed ? " 📌" : "")));
       legend.appendChild(s);
     });
+    if(sched.open){
+      var g = document.createElement("span");
+      var gi = document.createElement("i"); gi.className = "gap";
+      g.appendChild(gi);
+      g.appendChild(document.createTextNode("nog te plannen · " + sched.open + "n"));
+      legend.appendChild(g);
+    }
   }
 
   function renderStats(sched){
-    document.getElementById("s-days").textContent = sched.total;
+    document.getElementById("s-total").textContent = sched.total;
+    document.getElementById("s-planned").textContent = sched.planned;
+    document.getElementById("s-open").textContent = sched.open;
     document.getElementById("s-stops").textContent = state.stops.length;
-    document.getElementById("s-weeks").textContent = (sched.total/7).toFixed(1).replace(".", ",");
     document.getElementById("range").textContent = sched.end
-      ? "Van " + fmtLong(sched.start) + " tot en met " + fmtLong(sched.end) + "."
+      ? "Vertrek " + fmtLong(sched.start) + " · laatste overnachting " + fmtLong(sched.end) +
+        " · thuis " + fmtLong(sched.home) + "."
       : "Nog geen stops gepland.";
   }
 
@@ -416,14 +522,14 @@
   });
 
   document.getElementById("add").addEventListener("click", function(){
-    state.stops.push({ id: uid(), name: "", days: 7, color: PALETTE[state.stops.length % PALETTE.length] });
+    state.stops.push({ id: uid(), name: "", days: 2, color: PALETTE[state.stops.length % PALETTE.length], fixed: null });
     commit();
     var inputs = stopsEl.querySelectorAll("input.name");
     if(inputs.length) inputs[inputs.length-1].focus();
   });
 
   document.getElementById("reset").addEventListener("click", function(){
-    if(!confirm("Alle stops wissen en opnieuw beginnen?")) return;
+    if(!confirm("Alles wissen en terug naar het beginplan (vaste data heen en terug)?")) return;
     state = defaults(); startInput.value = state.start; commit();
   });
 
@@ -445,15 +551,10 @@
     if(!f) return;
     var r = new FileReader();
     r.onload = function(){
-      try{
-        var d = JSON.parse(r.result);
-        if(!d || !Array.isArray(d.stops) || !d.start) throw new Error("bad");
-        state = { start: d.start, stops: d.stops.map(function(s){
-          return { id: s.id || uid(), name: String(s.name||""), days: clampDays(s.days), color: s.color || PALETTE[0] };
-        })};
-        startInput.value = state.start;
-        commit();
-      }catch(e){ alert("Dit bestand kon niet gelezen worden."); }
+      var d = null;
+      try{ d = normalise(JSON.parse(r.result)); }catch(e){ d = null; }
+      if(d){ state = d; startInput.value = state.start; commit(); }
+      else { alert("Dit bestand kon niet gelezen worden."); }
       importFile.value = "";
     };
     r.readAsText(f);
