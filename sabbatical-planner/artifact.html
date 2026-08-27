@@ -1,0 +1,576 @@
+<title>Sabbatical 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* --- tokens: licht is de basis --- */
+  :root{
+    --bg:#f6f4f0; --panel:#ffffff; --ink:#1b1a18; --muted:#77726b;
+    --line:#e4e0d8; --accent:#1f6f5c; --accent-soft:#e6f0ed; --danger:#b0402f;
+    --gap-a:#ded9d0; --gap-b:#eae6df; --ring:rgba(255,255,255,.85);
+    --radius:14px; --shadow:0 1px 2px rgba(0,0,0,.05),0 8px 24px rgba(0,0,0,.05);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#14161a; --panel:#1c1f25; --ink:#eceae6; --muted:#9a958d;
+      --line:#2c313a; --accent:#57bfa3; --accent-soft:#1e3b34; --danger:#e07a67;
+      --gap-a:#2a2f37; --gap-b:#22262d; --ring:rgba(255,255,255,.6);
+      --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#14161a; --panel:#1c1f25; --ink:#eceae6; --muted:#9a958d;
+    --line:#2c313a; --accent:#57bfa3; --accent-soft:#1e3b34; --danger:#e07a67;
+    --gap-a:#2a2f37; --gap-b:#22262d; --ring:rgba(255,255,255,.6);
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  }
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:15px;line-height:1.5}
+  h1,h2,h3{font-family:Fraunces,Georgia,"Times New Roman",serif;font-weight:700;letter-spacing:-.01em;margin:0;text-wrap:balance}
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 20px 60px}
+  header.top{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;margin-bottom:22px}
+  header.top h1{font-size:30px}
+  header.top p{margin:4px 0 0;color:var(--muted);font-size:14px;max-width:60ch}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+  .layout{display:grid;grid-template-columns:minmax(360px,420px) 1fr;gap:22px;align-items:start}
+  @media (max-width:900px){ .layout{grid-template-columns:1fr} }
+
+  .section{padding:18px}
+  .section + .section{border-top:1px solid var(--line)}
+  .section h2{font-size:17px;margin-bottom:12px}
+  label.field{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px}
+  input[type=date],input[type=text],input[type=number]{
+    padding:9px 11px;border:1px solid var(--line);border-radius:9px;
+    background:var(--bg);color:var(--ink);font:inherit}
+  #start{width:100%}
+  input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);
+       font:inherit;font-weight:500;padding:8px 14px;border-radius:999px;cursor:pointer;
+       transition:transform .08s ease,background .15s ease}
+  .btn:hover{background:var(--accent-soft)}
+  .btn:active{transform:scale(.97)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn.primary:hover{filter:brightness(1.08)}
+  .btn.ghost{border-color:transparent;color:var(--muted);padding:6px 10px}
+  .btn.ghost:hover{color:var(--danger);background:transparent}
+  .btn.small{font-size:12px;padding:5px 11px}
+  .btnrow{display:flex;flex-wrap:wrap;gap:8px}
+
+  ul#stops{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+  li.stop{display:grid;grid-template-columns:14px 1fr auto;grid-template-rows:auto auto;
+          column-gap:10px;row-gap:3px;align-items:center;
+          padding:10px 10px 10px 8px;border:1px solid var(--line);border-radius:11px;background:var(--bg)}
+  li.stop.dragging{opacity:.4}
+  li.stop.dragover{outline:2px dashed var(--accent);outline-offset:2px}
+  li.stop.pinned{border-color:var(--accent)}
+  .swatch{grid-row:1 / span 2;width:14px;height:38px;border-radius:5px;border:none;padding:0;
+          cursor:pointer;position:relative;overflow:hidden}
+  .swatch input{position:absolute;inset:0;opacity:0;cursor:pointer;border:0;padding:0}
+  .stop-main{min-width:0}
+  .stop-main input.name{width:100%;border:none;background:transparent;padding:2px 0;font-weight:600;font-size:15px;color:var(--ink)}
+  .stop-main input.name:focus{outline:none;border-bottom:1px solid var(--accent)}
+  .dates{grid-column:2 / -1;font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;
+         align-items:center;gap:6px;font-variant-numeric:tabular-nums}
+  .dates input[type=date]{padding:2px 6px;font-size:12px;border-radius:6px}
+  .stop-side{display:flex;align-items:center;gap:2px}
+  .stepper{display:flex;align-items:center;gap:2px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:2px}
+  .stepper button{width:24px;height:24px;border:none;background:transparent;color:var(--muted);
+                  font-size:15px;line-height:1;cursor:pointer;border-radius:50%}
+  .stepper button:hover{background:var(--accent-soft);color:var(--ink)}
+  .stepper input{width:36px;text-align:center;border:none;background:transparent;padding:2px 0;
+                 font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+  .stepper input::-webkit-outer-spin-button,.stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .stepper input{-moz-appearance:textfield}
+  .unit{font-size:11px;color:var(--muted);margin-right:2px}
+  .pin{border:none;background:transparent;cursor:pointer;font-size:13px;line-height:1;
+       padding:5px 4px;border-radius:50%;filter:grayscale(1);opacity:.45}
+  .pin:hover{opacity:.9}
+  .pin.on{filter:none;opacity:1}
+  .grab{cursor:grab;color:var(--muted);padding:0 2px;user-select:none}
+  .warn{grid-column:1 / -1;font-size:12px;color:var(--danger);font-weight:500}
+
+  li.gap{display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:space-between;
+         padding:9px 12px;border:1px dashed var(--line);border-radius:11px;
+         background:repeating-linear-gradient(135deg,var(--gap-b) 0 7px,var(--gap-a) 7px 14px)}
+  li.gap .gap-txt{font-size:13px;color:var(--muted)}
+  li.gap .gap-txt b{color:var(--ink);font-weight:600}
+
+  .now{margin:12px 0 0;padding:9px 12px;border-radius:10px;background:var(--accent-soft);
+       color:var(--ink);font-size:13px}
+  .now b{font-family:Fraunces,Georgia,serif;font-size:15px}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);
+         border-radius:11px;overflow:hidden;border:1px solid var(--line)}
+  .stat{background:var(--panel);padding:12px 6px;text-align:center}
+  .stat b{display:block;font-family:Fraunces,Georgia,serif;font-size:21px;font-variant-numeric:tabular-nums}
+  .stat span{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+
+  .cal-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:18px 18px 0}
+  .months{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;padding:18px}
+  .month h3{font-size:16px;margin-bottom:8px;text-transform:capitalize}
+  .dow{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:3px}
+  .dow span{text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+  .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+  .day{aspect-ratio:1/1;border-radius:7px;display:flex;flex-direction:column;align-items:center;
+       justify-content:center;font-size:12px;background:var(--bg);color:var(--muted);position:relative;
+       border:1px solid transparent;overflow:hidden;font-variant-numeric:tabular-nums}
+  .day.empty{background:transparent}
+  .day.trip{color:#fff;font-weight:600}
+  .day.gapday{background:repeating-linear-gradient(135deg,var(--gap-b) 0 5px,var(--gap-a) 5px 10px);
+              color:var(--muted);font-weight:500}
+  .day .lbl{font-size:8px;font-weight:600;line-height:1.05;max-width:100%;padding:0 2px;
+            overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:.95}
+  .day.first{box-shadow:inset 2px 0 0 var(--ring)}
+  .day.today{border-color:var(--ink);box-shadow:0 0 0 2px var(--panel),0 0 0 3px var(--ink)}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;padding:0 18px 18px}
+  .legend span{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+  .legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+  .legend i.gap{background:repeating-linear-gradient(135deg,var(--gap-b) 0 4px,var(--gap-a) 4px 8px)}
+  .empty-note{padding:30px 18px;color:var(--muted);text-align:center}
+  footer{margin-top:26px;color:var(--muted);font-size:12px;text-align:center}
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important;animation:none !important} }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Sabbatical 2026</h1>
+      <p id="subtitle">Nachten per stop; vaste data staan vast met 📌. De gestreepte blokken zijn nog te plannen.</p>
+    </div>
+    <div class="btnrow">
+      <button class="btn" id="export" type="button">Opslaan als bestand</button>
+      <button class="btn" id="importBtn" type="button">Openen</button>
+      <input type="file" id="importFile" accept="application/json" hidden />
+    </div>
+  </header>
+
+  <div class="layout">
+    <div class="panel">
+      <div class="section">
+        <h2>Reis</h2>
+        <label class="field" for="start">Vertrekdatum</label>
+        <input type="date" id="start" />
+      </div>
+
+      <div class="section">
+        <h2>Stops</h2>
+        <ul id="stops"></ul>
+        <div class="btnrow" style="margin-top:12px">
+          <button class="btn primary" id="add" type="button">+ Stop toevoegen</button>
+          <button class="btn ghost" id="reset" type="button">Terug naar beginplan</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <p class="now" id="now" style="display:none"></p>
+        <div class="stats" style="margin-top:12px">
+          <div class="stat"><b id="s-total">0</b><span>nachten</span></div>
+          <div class="stat"><b id="s-planned">0</b><span>gepland</span></div>
+          <div class="stat"><b id="s-open">0</b><span>te plannen</span></div>
+          <div class="stat"><b id="s-stops">0</b><span>stops</span></div>
+        </div>
+        <p style="margin:10px 0 0;font-size:13px;color:var(--muted)" id="range"></p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="cal-head"><h2>Kalender</h2><span style="font-size:13px;color:var(--muted)" id="cal-note"></span></div>
+      <div class="months" id="calendar"></div>
+      <div class="legend" id="legend"></div>
+    </div>
+  </div>
+
+  <footer>Je wijzigingen worden in deze browser bewaard. Gebruik “Opslaan als bestand” voor een back-up of om het plan op een ander apparaat te openen.</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var KEY = "sabbatical-planner-v3";
+  var PALETTE = ["#1f6f5c","#c2703a","#3f6ea8","#8b5a9e","#b0402f","#5a8f3a","#c99a2e","#3a8f8f","#a34f76","#5f6b7a"];
+  var DOW = ["ma","di","wo","do","vr","za","zo"];
+  var MONTHS = ["januari","februari","maart","april","mei","juni","juli","augustus","september","oktober","november","december"];
+
+  /* ---------- datums (lokale middag, DST-veilig) ---------- */
+  function ymd(d){
+    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  }
+  function parse(s){ var p = String(s).split("-"); return new Date(+p[0], +p[1]-1, +p[2], 12, 0, 0); }
+  function addDays(d, n){ var x = new Date(d.getTime()); x.setDate(x.getDate()+n); x.setHours(12,0,0,0); return x; }
+  function diffDays(a, b){ return Math.round((b.getTime() - a.getTime()) / 86400000); }
+  function fmt(d){ return d.getDate() + " " + MONTHS[d.getMonth()].slice(0,3); }
+  function fmtLong(d){ return d.getDate() + " " + MONTHS[d.getMonth()] + " " + d.getFullYear(); }
+  function nights(n){ return n + (n === 1 ? " nacht" : " nachten"); }
+  function uid(){ return Math.random().toString(36).slice(2,10); }
+  function clampDays(n){ n = Math.round(Number(n)); if(!isFinite(n) || n < 1) n = 1; if(n > 365) n = 365; return n; }
+
+  /* ---------- beginplan ---------- */
+  function defaults(){
+    return {
+      start: "2026-08-20",
+      stops: [
+        { id: uid(), name: "Karlsruhe",              days: 2, color: PALETTE[0], fixed: "2026-08-20" },
+        { id: uid(), name: "Como",                   days: 1, color: PALETTE[1], fixed: null },
+        { id: uid(), name: "Camping Pian d'Amora",   days: 7, color: PALETTE[2], fixed: null },
+        { id: uid(), name: "Florence",               days: 4, color: PALETTE[3], fixed: null },
+        { id: uid(), name: "Boot Palermo → Genua",   days: 1, color: PALETTE[4], fixed: "2026-10-05" },
+        { id: uid(), name: "Lyon",                   days: 4, color: PALETTE[5], fixed: "2026-10-09" },
+        { id: uid(), name: "Onderweg naar huis",     days: 1, color: PALETTE[6], fixed: "2026-10-13" }
+      ]
+    };
+  }
+  function normalise(d){
+    if(!d || !Array.isArray(d.stops) || !d.start) return null;
+    return {
+      start: d.start,
+      stops: d.stops.map(function(s){
+        return { id: s.id || uid(), name: String(s.name || ""), days: clampDays(s.days),
+                 color: s.color || PALETTE[0], fixed: s.fixed || null };
+      })
+    };
+  }
+  function load(){
+    try{
+      var raw = localStorage.getItem(KEY);
+      return raw ? normalise(JSON.parse(raw)) : null;
+    }catch(e){ return null; }
+  }
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+
+  var state = load() || defaults();
+
+  /* ---------- schema ---------- */
+  function schedule(){
+    var start = parse(state.start), cursor = start, items = [], open = 0, planned = 0;
+    state.stops.forEach(function(s, i){
+      var conflict = 0;
+      if(s.fixed){
+        var f = parse(s.fixed);
+        var d = diffDays(cursor, f);
+        if(d > 0){
+          items.push({ type:"gap", nights:d, from:cursor, to:addDays(f,-1), before:i });
+          open += d;
+        }else if(d < 0){ conflict = -d; }
+        cursor = f;
+      }
+      var from = cursor, to = addDays(cursor, s.days - 1);
+      items.push({ type:"stop", stop:s, index:i, from:from, to:to, conflict:conflict });
+      planned += s.days;
+      cursor = addDays(to, 1);
+    });
+    var end = items.length ? items[items.length-1].to : null;
+    return { start:start, items:items, end:end, open:open, planned:planned,
+             total: end ? diffDays(start, end) + 1 : 0, home: end ? addDays(end,1) : null };
+  }
+  function dayNr(sched, d){ return diffDays(sched.start, d) + 1; }
+
+  /* ---------- stoplijst ---------- */
+  var stopsEl = document.getElementById("stops");
+
+  function renderStops(sched){
+    stopsEl.innerHTML = "";
+    if(!state.stops.length){
+      var p = document.createElement("li");
+      p.style.cssText = "color:var(--muted);font-size:13px;padding:6px 2px";
+      p.textContent = "Nog geen stops. Voeg je eerste bestemming toe.";
+      stopsEl.appendChild(p);
+      return;
+    }
+    sched.items.forEach(function(it){
+      stopsEl.appendChild(it.type === "gap" ? gapRow(it) : stopRow(it, sched));
+    });
+  }
+
+  function gapRow(it){
+    var li = document.createElement("li");
+    li.className = "gap";
+    var txt = document.createElement("div");
+    txt.className = "gap-txt";
+    txt.innerHTML = "Nog te plannen · <b>" + nights(it.nights) + "</b> · " + fmt(it.from) + " – " + fmt(it.to);
+    var btn = document.createElement("button");
+    btn.className = "btn small"; btn.type = "button"; btn.textContent = "+ stop hier";
+    btn.addEventListener("click", function(){
+      state.stops.splice(it.before, 0, {
+        id: uid(), name: "", days: Math.min(it.nights, 3),
+        color: PALETTE[state.stops.length % PALETTE.length], fixed: null
+      });
+      commit();
+      var inputs = stopsEl.querySelectorAll("input.name");
+      if(inputs[it.before]) inputs[it.before].focus();
+    });
+    li.appendChild(txt); li.appendChild(btn);
+    return li;
+  }
+
+  function stopRow(it, sched){
+    var s = it.stop;
+    var li = document.createElement("li");
+    li.className = "stop" + (s.fixed ? " pinned" : "");
+    li.draggable = true;
+    li.dataset.id = s.id;
+
+    var sw = document.createElement("label");
+    sw.className = "swatch"; sw.style.background = s.color; sw.title = "Kleur kiezen";
+    var color = document.createElement("input");
+    color.type = "color"; color.value = s.color;
+    color.addEventListener("input", function(){ s.color = color.value; sw.style.background = color.value; save(); renderCalendar(schedule()); });
+    sw.appendChild(color);
+
+    var main = document.createElement("div");
+    main.className = "stop-main";
+    var name = document.createElement("input");
+    name.type = "text"; name.className = "name"; name.value = s.name; name.placeholder = "Bestemming";
+    name.title = s.name;
+    name.addEventListener("input", function(){ s.name = name.value; name.title = name.value; save(); renderCalendar(schedule()); });
+    main.appendChild(name);
+
+    var side = document.createElement("div");
+    side.className = "stop-side";
+    var step = document.createElement("div"); step.className = "stepper";
+    var minus = document.createElement("button"); minus.type="button"; minus.textContent="−"; minus.title="Nacht eraf";
+    var num = document.createElement("input"); num.type="number"; num.min="1"; num.value = s.days;
+    var plus = document.createElement("button"); plus.type="button"; plus.textContent="+"; plus.title="Nacht erbij";
+    minus.addEventListener("click", function(){ s.days = clampDays(s.days - 1); commit(); });
+    plus.addEventListener("click", function(){ s.days = clampDays(s.days + 1); commit(); });
+    num.addEventListener("change", function(){ s.days = clampDays(num.value); commit(); });
+    step.appendChild(minus); step.appendChild(num); step.appendChild(plus);
+    var unit = document.createElement("span"); unit.className="unit"; unit.textContent="n"; unit.title="nachten";
+
+    var pin = document.createElement("button");
+    pin.type = "button"; pin.className = "pin" + (s.fixed ? " on" : ""); pin.textContent = "📌";
+    pin.title = s.fixed ? "Datum losmaken" : "Datum vastzetten";
+    pin.addEventListener("click", function(){ s.fixed = s.fixed ? null : ymd(it.from); commit(); });
+
+    var del = document.createElement("button");
+    del.type="button"; del.className="btn ghost"; del.textContent="✕"; del.title="Stop verwijderen";
+    del.addEventListener("click", function(){
+      state.stops = state.stops.filter(function(x){ return x.id !== s.id; }); commit();
+    });
+    var grab = document.createElement("span");
+    grab.className = "grab"; grab.textContent = "⠿"; grab.title = "Sleep om te verplaatsen";
+    side.appendChild(step); side.appendChild(unit); side.appendChild(pin); side.appendChild(del); side.appendChild(grab);
+
+    var dates = document.createElement("div");
+    dates.className = "dates";
+    if(s.fixed){
+      var fx = document.createElement("input");
+      fx.type = "date"; fx.value = s.fixed; fx.title = "Vaste aankomstdatum";
+      fx.addEventListener("change", function(){ if(fx.value){ s.fixed = fx.value; commit(); } });
+      dates.appendChild(fx);
+    }
+    var txt = document.createElement("span");
+    txt.textContent = (s.fixed ? "→ " : "") + fmt(it.from) + " – " + fmt(it.to) +
+                      " · " + nights(s.days) + " · dag " + dayNr(sched, it.from) + "–" + dayNr(sched, it.to);
+    dates.appendChild(txt);
+
+    li.appendChild(sw); li.appendChild(main); li.appendChild(side); li.appendChild(dates);
+
+    if(it.conflict){
+      var w = document.createElement("div");
+      w.className = "warn";
+      w.textContent = "⚠ " + nights(it.conflict) + " te veel ervoor — dit loopt over de vaste datum heen.";
+      li.appendChild(w);
+    }
+    wireDrag(li);
+    return li;
+  }
+
+  var dragId = null;
+  function wireDrag(li){
+    li.addEventListener("dragstart", function(e){
+      dragId = li.dataset.id; li.classList.add("dragging");
+      e.dataTransfer.effectAllowed = "move";
+      try{ e.dataTransfer.setData("text/plain", dragId); }catch(err){}
+    });
+    li.addEventListener("dragend", function(){ dragId = null; li.classList.remove("dragging"); });
+    li.addEventListener("dragover", function(e){ e.preventDefault(); li.classList.add("dragover"); });
+    li.addEventListener("dragleave", function(){ li.classList.remove("dragover"); });
+    li.addEventListener("drop", function(e){
+      e.preventDefault(); li.classList.remove("dragover");
+      var from = state.stops.findIndex(function(s){ return s.id === dragId; });
+      var to = state.stops.findIndex(function(s){ return s.id === li.dataset.id; });
+      if(from < 0 || to < 0 || from === to) return;
+      var moved = state.stops.splice(from,1)[0];
+      state.stops.splice(to,0,moved);
+      commit();
+    });
+  }
+
+  /* ---------- kalender ---------- */
+  function renderCalendar(sched){
+    var cal = document.getElementById("calendar");
+    var legend = document.getElementById("legend");
+    cal.innerHTML = ""; legend.innerHTML = "";
+    document.getElementById("cal-note").textContent = sched.open ? nights(sched.open) + " nog open" : "";
+
+    if(!sched.items.length){
+      cal.innerHTML = '<p class="empty-note">Voeg een stop toe om de kalender te vullen.</p>';
+      return;
+    }
+
+    var map = {};
+    sched.items.forEach(function(it){
+      for(var d = new Date(it.from.getTime()); d <= it.to; d = addDays(d,1)) map[ymd(d)] = it;
+    });
+
+    var today = new Date(); today.setHours(12,0,0,0);
+    var cur = new Date(sched.start.getFullYear(), sched.start.getMonth(), 1, 12);
+    var last = new Date(sched.end.getFullYear(), sched.end.getMonth(), 1, 12);
+
+    while(cur <= last){
+      var m = document.createElement("div"); m.className = "month";
+      var h = document.createElement("h3");
+      h.textContent = MONTHS[cur.getMonth()] + " " + cur.getFullYear();
+      m.appendChild(h);
+
+      var dow = document.createElement("div"); dow.className = "dow";
+      DOW.forEach(function(d){ var s = document.createElement("span"); s.textContent = d; dow.appendChild(s); });
+      m.appendChild(dow);
+
+      var grid = document.createElement("div"); grid.className = "grid";
+      var first = new Date(cur.getFullYear(), cur.getMonth(), 1, 12);
+      var lead = (first.getDay() + 6) % 7;
+      for(var i=0;i<lead;i++){ var e = document.createElement("div"); e.className="day empty"; grid.appendChild(e); }
+
+      var dim = new Date(cur.getFullYear(), cur.getMonth()+1, 0, 12).getDate();
+      for(var day=1; day<=dim; day++){
+        var d = new Date(cur.getFullYear(), cur.getMonth(), day, 12);
+        var cell = document.createElement("div"); cell.className = "day";
+        var num = document.createElement("span"); num.textContent = day; cell.appendChild(num);
+        var it = map[ymd(d)];
+        if(it){
+          var isFirst = ymd(d) === ymd(it.from);
+          var label;
+          if(it.type === "gap"){
+            cell.classList.add("gapday");
+            label = "te plannen";
+            cell.title = "Nog te plannen · " + fmtLong(d);
+          }else{
+            cell.classList.add("trip");
+            cell.style.background = it.stop.color;
+            label = it.stop.name || "—";
+            cell.title = (it.stop.name || "Stop") + (it.stop.fixed ? " (vast)" : "") + " · " + fmtLong(d);
+          }
+          if(isFirst){
+            cell.classList.add("first");
+            var lbl = document.createElement("span"); lbl.className = "lbl"; lbl.textContent = label;
+            cell.appendChild(lbl);
+          }
+        }
+        if(ymd(d) === ymd(today)) cell.classList.add("today");
+        grid.appendChild(cell);
+      }
+      m.appendChild(grid);
+      cal.appendChild(m);
+      cur = new Date(cur.getFullYear(), cur.getMonth()+1, 1, 12);
+    }
+
+    sched.items.forEach(function(it){
+      if(it.type === "gap") return;
+      var s = document.createElement("span");
+      var i = document.createElement("i"); i.style.background = it.stop.color;
+      s.appendChild(i);
+      s.appendChild(document.createTextNode((it.stop.name || "Naamloos") + " · " + it.stop.days + "n" + (it.stop.fixed ? " 📌" : "")));
+      legend.appendChild(s);
+    });
+    if(sched.open){
+      var g = document.createElement("span");
+      var gi = document.createElement("i"); gi.className = "gap";
+      g.appendChild(gi);
+      g.appendChild(document.createTextNode("nog te plannen · " + sched.open + "n"));
+      legend.appendChild(g);
+    }
+  }
+
+  function renderStats(sched){
+    document.getElementById("s-total").textContent = sched.total;
+    document.getElementById("s-planned").textContent = sched.planned;
+    document.getElementById("s-open").textContent = sched.open;
+    document.getElementById("s-stops").textContent = state.stops.length;
+    document.getElementById("range").textContent = sched.end
+      ? "Vertrek " + fmtLong(sched.start) + " · laatste overnachting " + fmtLong(sched.end) +
+        " · thuis " + fmtLong(sched.home) + "."
+      : "Nog geen stops gepland.";
+
+    var now = document.getElementById("now");
+    var today = new Date(); today.setHours(12,0,0,0);
+    var here = null;
+    sched.items.forEach(function(it){ if(today >= it.from && today <= it.to) here = it; });
+    if(here){
+      var left = diffDays(today, sched.end);
+      now.style.display = "";
+      now.innerHTML = "Vandaag · dag <b>" + dayNr(sched, today) + "</b> van " + sched.total + " · " +
+        (here.type === "gap" ? "nog te plannen" : (here.stop.name || "naamloze stop")) +
+        " · nog " + nights(left) + " te gaan.";
+    }else{
+      now.style.display = "none";
+    }
+  }
+
+  function render(){
+    var sched = schedule();
+    renderStops(sched);
+    renderCalendar(sched);
+    renderStats(sched);
+  }
+  function commit(){ save(); render(); }
+
+  /* ---------- bediening ---------- */
+  var startInput = document.getElementById("start");
+  startInput.value = state.start;
+  startInput.addEventListener("change", function(){
+    if(!startInput.value) return;
+    state.start = startInput.value; commit();
+  });
+
+  document.getElementById("add").addEventListener("click", function(){
+    state.stops.push({ id: uid(), name: "", days: 2, color: PALETTE[state.stops.length % PALETTE.length], fixed: null });
+    commit();
+    var inputs = stopsEl.querySelectorAll("input.name");
+    if(inputs.length) inputs[inputs.length-1].focus();
+  });
+
+  document.getElementById("reset").addEventListener("click", function(){
+    if(!confirm("Alles wissen en terug naar het beginplan (vaste data heen en terug)?")) return;
+    state = defaults(); startInput.value = state.start; commit();
+  });
+
+  /* Downloaden loopt via de viewer; valt terug op een gewone link buiten claude.ai. */
+  var downloads = null;
+  if(window.claude && typeof window.claude.use === "function"){
+    try{ window.claude.use("downloads").then(function(d){ downloads = d; }).catch(function(){}); }catch(e){}
+  }
+  document.getElementById("export").addEventListener("click", function(){
+    var json = JSON.stringify(state, null, 2);
+    if(downloads && typeof downloads.save === "function"){
+      downloads.save({ filename: "sabbatical-plan.json", data: json }).catch(function(){});
+      return;
+    }
+    var blob = new Blob([json], {type:"application/json"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "sabbatical-plan.json";
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 0);
+  });
+
+  var importFile = document.getElementById("importFile");
+  document.getElementById("importBtn").addEventListener("click", function(){ importFile.click(); });
+  importFile.addEventListener("change", function(){
+    var f = importFile.files && importFile.files[0];
+    if(!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      var d = null;
+      try{ d = normalise(JSON.parse(r.result)); }catch(e){ d = null; }
+      if(d){ state = d; startInput.value = state.start; commit(); }
+      else { alert("Dit bestand kon niet gelezen worden. Kies het JSON-bestand dat de planner zelf opslaat."); }
+      importFile.value = "";
+    };
+    r.readAsText(f);
+  });
+
+  render();
+})();
+</script>
