@@ -36,6 +36,11 @@ thuis 14 oktober.
 Zolang de reis loopt staat boven de totalen welke dag je vandaag zit, waar je bent en hoeveel
 nachten er nog te gaan zijn; de dag van vandaag krijgt in de kalender een zwart randje.
 
+- **Ideeën**: onder de stops staat een verlanglijst van bestemmingen die je nog wilt inplannen.
+  Typ een naam, zet het aantal nachten, en kies in het keuzelijstje eronder in welk open blok hij
+  moet komen — dan wordt het een stop op die plek en verdwijnt hij van de lijst. Past een idee niet
+  in een blok, dan staat "(te lang)" achter dat blok.
+
 ## Bewaren
 
 Het plan wordt automatisch in je browser bewaard (localStorage), dus het staat er nog als je

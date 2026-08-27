@@ -99,6 +99,22 @@
   li.gap .gap-txt{font-size:13px;color:var(--muted)}
   li.gap .gap-txt b{color:var(--ink);font-weight:600}
 
+  .hint{margin:-6px 0 12px;font-size:12px;color:var(--muted)}
+  ul#ideas{list-style:none;margin:0 0 12px;padding:0;display:flex;flex-direction:column;gap:6px}
+  li.idea{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto;
+          column-gap:8px;row-gap:4px;align-items:center;
+          padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+  li.idea input.iname{width:100%;border:none;background:transparent;padding:2px 0;
+                      font-weight:600;font-size:14px;color:var(--ink)}
+  li.idea input.iname:focus{outline:none;border-bottom:1px solid var(--accent)}
+  li.idea .iside{display:flex;align-items:center;gap:4px}
+  li.idea select.plan{grid-column:1 / -1;width:100%;padding:4px 8px;border:1px solid var(--line);
+                      border-radius:999px;background:var(--panel);color:var(--accent);font:inherit;
+                      font-size:12px;font-weight:500;cursor:pointer}
+  li.idea select.plan:disabled{color:var(--muted);cursor:default;opacity:.6}
+  .ideaform{display:flex;gap:6px}
+  .ideaform input{flex:1;min-width:0;font-size:14px;padding:8px 11px}
+  .ideas-empty{font-size:13px;color:var(--muted);padding:2px 2px 10px}
   .now{margin:12px 0 0;padding:9px 12px;border-radius:10px;background:var(--accent-soft);
        color:var(--ink);font-size:13px}
   .now b{font-family:Fraunces,Georgia,serif;font-size:15px}
@@ -199,6 +215,16 @@
       </div>
 
       <div class="section">
+        <h2>Ideeën</h2>
+        <p class="hint">Bestemmingen die je nog wilt inplannen. Kies een open blok om er een stop van te maken.</p>
+        <ul id="ideas"></ul>
+        <form class="ideaform" id="ideaform">
+          <input type="text" id="ideaname" placeholder="Bijv. Cinque Terre" aria-label="Nieuwe bestemming" />
+          <button class="btn small" type="submit">Toevoegen</button>
+        </form>
+      </div>
+
+      <div class="section">
         <p class="now" id="now" style="display:none"></p>
         <div class="stats" style="margin-top:12px">
           <div class="stat"><b id="s-total">0</b><span>nachten</span></div>
@@ -255,6 +281,7 @@
   function defaults(){
     return {
       start: "2026-08-20",
+      ideas: [],
       stops: [
         { id: uid(), name: "Karlsruhe",              days: 2, color: PALETTE[0], fixed: "2026-08-20" },
         { id: uid(), name: "Como",                   days: 1, color: PALETTE[1], fixed: null },
@@ -270,6 +297,9 @@
     if(!d || !Array.isArray(d.stops) || !d.start) return null;
     return {
       start: d.start,
+      ideas: (Array.isArray(d.ideas) ? d.ideas : []).map(function(x){
+        return { id: x.id || uid(), name: String(x.name || ""), days: clampDays(x.days) };
+      }),
       stops: d.stops.map(function(s){
         return { id: s.id || uid(), name: String(s.name || ""), days: clampDays(s.days),
                  color: s.color || PALETTE[0], fixed: s.fixed || null,
@@ -681,9 +711,96 @@
     }
   }
 
+  /* ---------- ideeënlijst ---------- */
+  var ideasEl = document.getElementById("ideas");
+
+  function renderIdeas(sched){
+    ideasEl.innerHTML = "";
+    var gaps = sched.items.filter(function(it){ return it.type === "gap"; });
+
+    if(!state.ideas.length){
+      var p = document.createElement("li");
+      p.className = "ideas-empty";
+      p.textContent = "Nog geen ideeën. Zet hieronder een bestemming op de lijst.";
+      ideasEl.appendChild(p);
+      return;
+    }
+
+    state.ideas.forEach(function(idea){
+      var li = document.createElement("li");
+      li.className = "idea";
+
+      var name = document.createElement("input");
+      name.type = "text"; name.className = "iname"; name.value = idea.name;
+      name.placeholder = "Bestemming"; name.title = idea.name;
+      name.addEventListener("input", function(){ idea.name = name.value; name.title = name.value; save(); });
+
+      var side = document.createElement("div"); side.className = "iside";
+
+      var step = document.createElement("div"); step.className = "stepper";
+      var minus = document.createElement("button"); minus.type="button"; minus.textContent="−"; minus.title="Nacht eraf";
+      var num = document.createElement("input"); num.type="number"; num.min="1"; num.value = idea.days;
+      var plus = document.createElement("button"); plus.type="button"; plus.textContent="+"; plus.title="Nacht erbij";
+      minus.addEventListener("click", function(){ idea.days = clampDays(idea.days - 1); commit(); });
+      plus.addEventListener("click", function(){ idea.days = clampDays(idea.days + 1); commit(); });
+      num.addEventListener("change", function(){ idea.days = clampDays(num.value); commit(); });
+      step.appendChild(minus); step.appendChild(num); step.appendChild(plus);
+      var unit = document.createElement("span"); unit.className = "unit"; unit.textContent = "n"; unit.title = "nachten";
+
+      var plan = document.createElement("select");
+      plan.className = "plan";
+      plan.title = "In welk open blok wil je deze stop zetten?";
+      var head = document.createElement("option");
+      head.value = ""; head.textContent = gaps.length ? "→ plan in…" : "geen open dagen";
+      plan.appendChild(head);
+      gaps.forEach(function(g, gi){
+        var op = document.createElement("option");
+        op.value = String(gi);
+        op.textContent = fmt(g.from) + " – " + fmt(g.to) + " · " + g.nights + "n" +
+                         (idea.days > g.nights ? " (te lang)" : "");
+        plan.appendChild(op);
+      });
+      plan.disabled = !gaps.length;
+      plan.addEventListener("change", function(){
+        var g = gaps[Number(plan.value)];
+        if(!g) return;
+        state.stops.splice(g.before, 0, {
+          id: uid(), name: idea.name, days: clampDays(idea.days),
+          color: PALETTE[state.stops.length % PALETTE.length], fixed: null, fixedKind: "aankomst"
+        });
+        state.ideas = state.ideas.filter(function(x){ return x.id !== idea.id; });
+        commit();
+      });
+
+      var del = document.createElement("button");
+      del.type = "button"; del.className = "btn ghost"; del.textContent = "✕";
+      del.title = "Van de lijst halen";
+      del.addEventListener("click", function(){
+        state.ideas = state.ideas.filter(function(x){ return x.id !== idea.id; });
+        commit();
+      });
+
+      side.appendChild(step); side.appendChild(unit); side.appendChild(del);
+      li.appendChild(name); li.appendChild(side); li.appendChild(plan);
+      ideasEl.appendChild(li);
+    });
+  }
+
+  document.getElementById("ideaform").addEventListener("submit", function(e){
+    e.preventDefault();
+    var input = document.getElementById("ideaname");
+    var v = input.value.trim();
+    if(!v) return;
+    state.ideas.push({ id: uid(), name: v, days: 3 });
+    input.value = "";
+    commit();
+    input.focus();
+  });
+
   function render(){
     var sched = schedule();
     renderStops(sched);
+    renderIdeas(sched);
     renderCalendar(sched);
     renderStats(sched);
   }
