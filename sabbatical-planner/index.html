@@ -69,6 +69,12 @@
   .dates{grid-column:2 / -1;font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;
          align-items:center;gap:6px}
   .dates input[type=date]{padding:2px 6px;font-size:12px;border-radius:6px}
+  .dates select.kind{padding:2px 4px;border:1px solid var(--line);border-radius:6px;
+                     background:var(--panel);color:var(--ink);font:inherit;font-size:12px}
+  .linkbtn{border:none;background:transparent;color:var(--accent);font:inherit;font-size:12px;
+           font-weight:500;padding:2px 4px;border-radius:6px;cursor:pointer;text-decoration:underline;
+           text-underline-offset:2px}
+  .linkbtn:hover{background:var(--accent-soft)}
   .stop-side{display:flex;align-items:center;gap:2px}
   .stepper{display:flex;align-items:center;gap:2px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:2px}
   .stepper button{width:24px;height:24px;border:none;background:transparent;color:var(--muted);
@@ -78,10 +84,6 @@
   .stepper input::-webkit-outer-spin-button,.stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
   .stepper input{-moz-appearance:textfield}
   .unit{font-size:11px;color:var(--muted);margin-right:2px}
-  .pin{border:none;background:transparent;cursor:pointer;font-size:13px;line-height:1;
-       padding:5px 4px;border-radius:50%;filter:grayscale(1);opacity:.45}
-  .pin:hover{opacity:.9}
-  .pin.on{filter:none;opacity:1}
   .grab{cursor:grab;color:var(--muted);padding:0 2px;user-select:none}
   .warn{grid-column:1 / -1;font-size:12px;color:var(--danger);font-weight:500}
 
@@ -170,7 +172,7 @@
   <header class="top">
     <div>
       <h1>Sabbatical reisplanner</h1>
-      <p id="subtitle">Zet nachten per stop; zet vaste data vast met 📌. De gestreepte blokken zijn nog te plannen.</p>
+      <p id="subtitle">Nachten per stop. Met 📌 zet je een <b>aankomst</b>- of <b>vertrekdatum</b> vast — zo plan je ook terug vanaf een boot of vlucht. Gestreept = nog te plannen.</p>
     </div>
     <div class="btnrow no-print">
       <button class="btn" id="print">Printen</button>
@@ -280,7 +282,8 @@
       start: d.start,
       stops: d.stops.map(function(s){
         return { id: s.id || uid(), name: String(s.name || ""), days: clampDays(s.days),
-                 color: s.color || PALETTE[0], fixed: s.fixed || null };
+                 color: s.color || PALETTE[0], fixed: s.fixed || null,
+                 fixedKind: s.fixedKind === "vertrek" ? "vertrek" : "aankomst" };
       })
     };
   }
@@ -297,15 +300,15 @@
     state.stops.forEach(function(s, i){
       var conflict = 0;
       if(s.fixed){
+        /* een vaste datum is de aankomst, of het vertrek — dan telt hij terug */
         var f = parse(s.fixed);
-        var d = diffDays(cursor, f);
+        var begin = (s.fixedKind === "vertrek") ? addDays(f, -s.days) : f;
+        var d = diffDays(cursor, begin);
         if(d > 0){
-          items.push({ type:"gap", nights:d, from:cursor, to:addDays(f,-1), before:i });
+          items.push({ type:"gap", nights:d, from:cursor, to:addDays(begin,-1), before:i });
           open += d;
-        }else if(d < 0){
-          conflict = -d;
-        }
-        cursor = f;
+        }else if(d < 0){ conflict = -d; }
+        cursor = begin;
       }
       var from = cursor, to = addDays(cursor, s.days - 1);
       items.push({ type:"stop", stop:s, index:i, from:from, to:to, conflict:conflict });
@@ -388,16 +391,7 @@
     plus.addEventListener("click", function(){ s.days = clampDays(s.days + 1); commit(); });
     num.addEventListener("change", function(){ s.days = clampDays(num.value); commit(); });
     step.appendChild(minus); step.appendChild(num); step.appendChild(plus);
-    var unit = document.createElement("span"); unit.className="unit"; unit.textContent="n";
-    unit.title = "nachten";
-
-    var pin = document.createElement("button");
-    pin.type = "button"; pin.className = "pin" + (s.fixed ? " on" : ""); pin.textContent = "📌";
-    pin.title = s.fixed ? "Datum losmaken" : "Datum vastzetten";
-    pin.addEventListener("click", function(){
-      s.fixed = s.fixed ? null : ymd(it.from);
-      commit();
-    });
+    var unit = document.createElement("span"); unit.className="unit"; unit.textContent="n"; unit.title="nachten";
 
     var del = document.createElement("button");
     del.type="button"; del.className="btn ghost"; del.textContent="✕"; del.title="Stop verwijderen";
@@ -406,20 +400,56 @@
     });
     var grab = document.createElement("span");
     grab.className = "grab"; grab.textContent = "⠿"; grab.title = "Sleep om te verplaatsen";
-    side.appendChild(step); side.appendChild(unit); side.appendChild(pin); side.appendChild(del); side.appendChild(grab);
+    side.appendChild(step); side.appendChild(unit); side.appendChild(del); side.appendChild(grab);
 
+    /* datumregel: vastzetten op aankomst óf vertrek, zodat je ook terug kunt rekenen */
     var dates = document.createElement("div");
     dates.className = "dates";
+    var range = fmt(it.from) + " – " + fmt(it.to) + " · " + nights(s.days) +
+                " · dag " + dayNr(sched, it.from) + "–" + dayNr(sched, it.to);
+
     if(s.fixed){
+      var kind = document.createElement("select");
+      kind.className = "kind"; kind.title = "Welke datum staat vast?";
+      [["aankomst","aankomst"],["vertrek","vertrek"]].forEach(function(o){
+        var op = document.createElement("option"); op.value = o[0]; op.textContent = o[1];
+        if((s.fixedKind || "aankomst") === o[0]) op.selected = true;
+        kind.appendChild(op);
+      });
+      kind.addEventListener("change", function(){
+        /* houd de stop staan waar hij staat bij het omschakelen */
+        s.fixed = kind.value === "vertrek" ? ymd(addDays(it.to, 1)) : ymd(it.from);
+        s.fixedKind = kind.value;
+        commit();
+      });
       var fx = document.createElement("input");
-      fx.type = "date"; fx.value = s.fixed; fx.title = "Vaste aankomstdatum";
+      fx.type = "date"; fx.value = s.fixed;
+      fx.title = s.fixedKind === "vertrek" ? "Vertrekdatum (ochtend na de laatste nacht)" : "Aankomstdatum";
       fx.addEventListener("change", function(){ if(fx.value){ s.fixed = fx.value; commit(); } });
+
+      var loose = document.createElement("button");
+      loose.type = "button"; loose.className = "linkbtn"; loose.textContent = "losmaken";
+      loose.title = "Datum niet meer vastzetten";
+      loose.addEventListener("click", function(){ s.fixed = null; delete s.fixedKind; commit(); });
+
+      var pinMark = document.createElement("span"); pinMark.textContent = "📌";
+      dates.appendChild(pinMark);
+      dates.appendChild(kind);
       dates.appendChild(fx);
+      var txt = document.createElement("span"); txt.textContent = range;
+      dates.appendChild(txt);
+      dates.appendChild(loose);
+    }else{
+      var txt2 = document.createElement("span"); txt2.textContent = range;
+      dates.appendChild(txt2);
+      var setBtn = document.createElement("button");
+      setBtn.type = "button"; setBtn.className = "linkbtn"; setBtn.textContent = "📌 datum vastzetten";
+      setBtn.title = "Zet de aankomst- of vertrekdatum van deze stop vast";
+      setBtn.addEventListener("click", function(){
+        s.fixed = ymd(it.from); s.fixedKind = "aankomst"; commit();
+      });
+      dates.appendChild(setBtn);
     }
-    var txt = document.createElement("span");
-    txt.textContent = (s.fixed ? "→ " : "") + fmt(it.from) + " – " + fmt(it.to) +
-                      " · " + nights(s.days) + " · dag " + dayNr(sched, it.from) + "–" + dayNr(sched, it.to);
-    dates.appendChild(txt);
 
     li.appendChild(sw); li.appendChild(main); li.appendChild(side); li.appendChild(dates);
 
@@ -433,7 +463,6 @@
     return li;
   }
 
-  /* drag & drop reordering */
   var dragId = null;
   function wireDrag(li){
     li.addEventListener("dragstart", function(e){

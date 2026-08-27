@@ -9,9 +9,11 @@ Open `index.html` in je browser (dubbelklikken is genoeg — geen server, geen i
 - **Vertrekdatum** bovenaan bepaalt waar de reis begint.
 - **Stops** voeg je toe met "+ Stop toevoegen". Per stop vul je een naam en het aantal **nachten** in
   (met − / + of door het getal te typen). Alle aankomst- en vertrekdatums schuiven automatisch mee.
-- **Vaste datums** zet je vast met de 📌 naast een stop: die stop blijft op zijn datum staan, wat je
-  ervoor ook verandert. Zo staan het begin (20 aug) en de terugreis (boot 5 okt, Lyon 9 okt, laatste
-  rijdag 13 okt) al vast.
+- **Vaste datums**: onder elke stop staat "📌 datum vastzetten". Die stop blijft daarna op zijn datum
+  staan, wat je ervoor ook verandert. Je kiest zelf of de **aankomst** of het **vertrek** vastligt:
+  met "vertrek" telt de planner terug vanaf die datum, zodat je "de laatste 10 nachten vóór de boot"
+  gewoon kunt invullen — het gat ervóór krimpt dan mee. Zo staan het begin (20 aug) en de terugreis
+  (boot 5 okt, Lyon 9 okt, laatste rijdag 13 okt) al vast.
 - **Nog te plannen**: de gestreepte blokken tussen twee vaste stops zijn de dagen die nog vrij zijn.
   Met "+ stop hier" plaats je daar een nieuwe stop; het gat krimpt automatisch mee. Plan je te veel
   nachten, dan verschijnt een waarschuwing bij de vaste stop die je overloopt.
