@@ -22,10 +22,13 @@ Open `index.html` in je browser (dubbelklikken is genoeg — geen server, geen i
 
 ## Het beginplan
 
-Bij "Terug naar beginplan" (en bij een lege browser) staat de reis van 2027 klaar:
+Bij "Terug naar beginplan" (en bij een lege browser) staat de reis van 2026 klaar:
 Karlsruhe 2 n · Como 1 n · Camping Pian d'Amora 7 n · Florence 4 n · **32 nachten te plannen** ·
 boot Palermo–Genua 5 okt · **3 nachten te plannen** · Lyon 9–13 okt · laatste rijdag 13 okt ·
 thuis 14 oktober.
+
+Zolang de reis loopt staat boven de totalen welke dag je vandaag zit, waar je bent en hoeveel
+nachten er nog te gaan zijn; de dag van vandaag krijgt in de kalender een zwart randje.
 
 ## Bewaren
 

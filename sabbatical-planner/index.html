@@ -97,6 +97,9 @@
   .stat b{display:block;font-family:Fraunces,Georgia,serif;font-size:21px}
   .stat span{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
 
+  .now{margin:12px 0 0;padding:9px 12px;border-radius:10px;background:var(--accent-soft);
+       color:var(--ink);font-size:13px}
+  .now b{font-family:Fraunces,Georgia,serif;font-size:15px}
   .cal-head{display:flex;justify-content:space-between;align-items:center;padding:18px 18px 0}
   .months{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;padding:18px}
   .month h3{font-size:16px;margin-bottom:8px;text-transform:capitalize}
@@ -113,7 +116,7 @@
   .day .lbl{font-size:8px;font-weight:600;line-height:1.05;max-width:100%;padding:0 2px;
             overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:.95}
   .day.first{box-shadow:inset 2px 0 0 rgba(255,255,255,.85)}
-  .day.today{border-color:var(--ink)}
+  .day.today{border-color:var(--ink);box-shadow:0 0 0 2px var(--panel),0 0 0 3px var(--ink)}
   .legend{display:flex;flex-wrap:wrap;gap:10px;padding:0 18px 18px}
   .legend span{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
   .legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
@@ -167,6 +170,7 @@
           <div class="stat"><b id="s-open">0</b><span>te plannen</span></div>
           <div class="stat"><b id="s-stops">0</b><span>stops</span></div>
         </div>
+        <p class="now" id="now" style="display:none"></p>
         <p style="margin:10px 0 0;font-size:13px;color:var(--muted)" id="range"></p>
       </div>
     </div>
@@ -184,7 +188,7 @@
 <script>
 (function(){
   "use strict";
-  var KEY = "sabbatical-planner-v2";
+  var KEY = "sabbatical-planner-v3";
   var PALETTE = ["#1f6f5c","#c2703a","#3f6ea8","#8b5a9e","#b0402f","#5a8f3a","#c99a2e","#3a8f8f","#a34f76","#5f6b7a"];
   var DOW = ["ma","di","wo","do","vr","za","zo"];
   var MONTHS = ["januari","februari","maart","april","mei","juni","juli","augustus","september","oktober","november","december"];
@@ -205,15 +209,15 @@
   /* ---------- beginplan ---------- */
   function defaults(){
     return {
-      start: "2027-08-20",
+      start: "2026-08-20",
       stops: [
-        { id: uid(), name: "Karlsruhe",              days: 2, color: PALETTE[0], fixed: "2027-08-20" },
+        { id: uid(), name: "Karlsruhe",              days: 2, color: PALETTE[0], fixed: "2026-08-20" },
         { id: uid(), name: "Como",                   days: 1, color: PALETTE[1], fixed: null },
         { id: uid(), name: "Camping Pian d'Amora",   days: 7, color: PALETTE[2], fixed: null },
         { id: uid(), name: "Florence",               days: 4, color: PALETTE[3], fixed: null },
-        { id: uid(), name: "Boot Palermo → Genua",   days: 1, color: PALETTE[4], fixed: "2027-10-05" },
-        { id: uid(), name: "Lyon",                   days: 4, color: PALETTE[5], fixed: "2027-10-09" },
-        { id: uid(), name: "Onderweg naar huis",     days: 1, color: PALETTE[6], fixed: "2027-10-13" }
+        { id: uid(), name: "Boot Palermo → Genua",   days: 1, color: PALETTE[4], fixed: "2026-10-05" },
+        { id: uid(), name: "Lyon",                   days: 4, color: PALETTE[5], fixed: "2026-10-09" },
+        { id: uid(), name: "Onderweg naar huis",     days: 1, color: PALETTE[6], fixed: "2026-10-13" }
       ]
     };
   }
@@ -503,6 +507,21 @@
       ? "Vertrek " + fmtLong(sched.start) + " · laatste overnachting " + fmtLong(sched.end) +
         " · thuis " + fmtLong(sched.home) + "."
       : "Nog geen stops gepland.";
+
+    /* waar ben je vandaag, en hoeveel reis is er nog? */
+    var now = document.getElementById("now");
+    var today = new Date(); today.setHours(12,0,0,0);
+    var here = null;
+    sched.items.forEach(function(it){ if(today >= it.from && today <= it.to) here = it; });
+    if(here){
+      var left = diffDays(today, sched.end);
+      now.style.display = "";
+      now.innerHTML = "Vandaag · dag <b>" + dayNr(sched, today) + "</b> van " + sched.total + " · " +
+        (here.type === "gap" ? "nog te plannen" : (here.stop.name || "naamloze stop")) +
+        " · nog " + nights(left) + " te gaan.";
+    }else{
+      now.style.display = "none";
+    }
   }
 
   function render(){
