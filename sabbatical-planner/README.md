@@ -19,6 +19,10 @@ Open `index.html` in je browser (dubbelklikken is genoeg — geen server, geen i
   nachten, dan verschijnt een waarschuwing bij de vaste stop die je overloopt.
 - **Kleur** per stop kies je via het gekleurde balkje links.
 - **Volgorde** wijzig je door een stop te verslepen (sleepgreep ⠿ rechts).
+- **Weghalen** kan op twee manieren, onderaan elke stop: "terug naar ideeën" haalt hem uit het plan
+  en zet hem met zijn nachten terug op de ideeënlijst (meteen toegewezen aan het blok waar hij
+  stond), "verwijderen" haalt hem helemaal weg. In beide gevallen komen de nachten weer vrij in het
+  open blok.
 - De **kalender** heeft twee weergaven, om te wisselen met de knoppen rechtsboven:
   **Overzicht** (alle maanden naast elkaar, kleine vakjes) en **Per maand** (één maand groot,
   met in elk dagvak de naam van de stop en of het een aankomst of laatste nacht is; blader met ‹ ›).

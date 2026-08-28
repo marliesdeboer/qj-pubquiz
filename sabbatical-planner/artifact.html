@@ -1,5 +1,5 @@
 <title>Sabbatical 2026</title>
-<script id="plan-state" type="application/json">null</script>
+<script id="plan-state" type="application/json">{"start":"2026-08-20","ideas":[{"id":"fyprls64","name":"Rome","days":4,"block":"tdljvdm9"},{"id":"vw2cop8j","name":"Napels","days":4,"block":"tdljvdm9"},{"id":"n0cxfeyy","name":"Regio orvieto","days":6,"block":"tdljvdm9"},{"id":"4xp0dwat","name":"Elba","days":5,"block":"tdljvdm9"}],"stops":[{"id":"1g9y11tv","name":"Karlsruhe","days":2,"color":"#1f6f5c","fixed":"2026-08-20","fixedKind":"aankomst"},{"id":"mt49g1re","name":"Como","days":1,"color":"#c2703a","fixed":null,"fixedKind":"aankomst"},{"id":"f3jg1hil","name":"Camping Pian d'Amora","days":7,"color":"#3f6ea8","fixed":null,"fixedKind":"aankomst"},{"id":"out2qzbo","name":"Florence","days":4,"color":"#8b5a9e","fixed":null,"fixedKind":"aankomst"},{"id":"tdljvdm9","name":"Sicilië ","days":9,"color":"#3a8f8f","fixed":"2026-10-05","fixedKind":"vertrek"},{"id":"3gzzgoe1","name":"Boot Palermo → Genua","days":1,"color":"#b0402f","fixed":"2026-10-05","fixedKind":"aankomst"},{"id":"nttu8c6q","name":"Genua","days":3,"color":"#a34f76","fixed":null,"fixedKind":"aankomst"},{"id":"alg6q9io","name":"Lyon","days":4,"color":"#5a8f3a","fixed":"2026-10-09","fixedKind":"aankomst"},{"id":"vdpctkt4","name":"Onderweg naar huis","days":1,"color":"#c99a2e","fixed":"2026-10-13","fixedKind":"aankomst"}],"updatedAt":1787901007430}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -86,6 +86,8 @@
            font-weight:500;padding:2px 4px;border-radius:6px;cursor:pointer;text-decoration:underline;
            text-underline-offset:2px}
   .linkbtn:hover{background:var(--accent-soft)}
+  .linkbtn.danger{color:var(--danger)}
+  .linkbtn.danger:hover{background:rgba(176,64,47,.12)}
   .stop-side{display:flex;align-items:center;gap:2px}
   .stepper{display:flex;align-items:center;gap:2px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:2px}
   .stepper button{width:24px;height:24px;border:none;background:transparent;color:var(--muted);
@@ -567,14 +569,9 @@
     step.appendChild(minus); step.appendChild(num); step.appendChild(plus);
     var unit = document.createElement("span"); unit.className="unit"; unit.textContent="n"; unit.title="nachten";
 
-    var del = document.createElement("button");
-    del.type="button"; del.className="btn ghost"; del.textContent="✕"; del.title="Stop verwijderen";
-    del.addEventListener("click", function(){
-      state.stops = state.stops.filter(function(x){ return x.id !== s.id; }); commit();
-    });
     var grab = document.createElement("span");
     grab.className = "grab"; grab.textContent = "⠿"; grab.title = "Sleep om te verplaatsen";
-    side.appendChild(step); side.appendChild(unit); side.appendChild(del); side.appendChild(grab);
+    side.appendChild(step); side.appendChild(unit); side.appendChild(grab);
 
     /* datumregel: vastzetten op aankomst óf vertrek, zodat je ook terug kunt rekenen */
     var dates = document.createElement("div");
@@ -624,6 +621,33 @@
       });
       dates.appendChild(setBtn);
     }
+
+    /* een geplande stop weer weghalen: terug naar de ideeën, of helemaal weg */
+    var back = document.createElement("button");
+    back.type = "button"; back.className = "linkbtn"; back.textContent = "terug naar ideeën";
+    back.title = "Haal deze stop uit het plan en zet hem terug op de ideeënlijst";
+    back.addEventListener("click", function(){
+      var i = state.stops.findIndex(function(x){ return x.id === s.id; });
+      if(i < 0) return;
+      var block = null;
+      for(var k = i + 1; k < state.stops.length; k++){
+        if(state.stops[k].fixed){ block = state.stops[k].id; break; }
+      }
+      state.stops.splice(i, 1);
+      state.ideas.push({ id: uid(), name: s.name, days: s.days, block: block });
+      commit();
+    });
+
+    var drop = document.createElement("button");
+    drop.type = "button"; drop.className = "linkbtn danger"; drop.textContent = "verwijderen";
+    drop.title = "Deze stop helemaal weghalen";
+    drop.addEventListener("click", function(){
+      if(s.name && !confirm("“" + s.name + "” uit het plan halen?")) return;
+      state.stops = state.stops.filter(function(x){ return x.id !== s.id; });
+      commit();
+    });
+    dates.appendChild(back);
+    dates.appendChild(drop);
 
     li.appendChild(sw); li.appendChild(main); li.appendChild(side); li.appendChild(dates);
 

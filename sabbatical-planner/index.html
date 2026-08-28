@@ -75,6 +75,8 @@
            font-weight:500;padding:2px 4px;border-radius:6px;cursor:pointer;text-decoration:underline;
            text-underline-offset:2px}
   .linkbtn:hover{background:var(--accent-soft)}
+  .linkbtn.danger{color:var(--danger)}
+  .linkbtn.danger:hover{background:rgba(176,64,47,.12)}
   .stop-side{display:flex;align-items:center;gap:2px}
   .stepper{display:flex;align-items:center;gap:2px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:2px}
   .stepper button{width:24px;height:24px;border:none;background:transparent;color:var(--muted);
@@ -456,14 +458,9 @@
     step.appendChild(minus); step.appendChild(num); step.appendChild(plus);
     var unit = document.createElement("span"); unit.className="unit"; unit.textContent="n"; unit.title="nachten";
 
-    var del = document.createElement("button");
-    del.type="button"; del.className="btn ghost"; del.textContent="✕"; del.title="Stop verwijderen";
-    del.addEventListener("click", function(){
-      state.stops = state.stops.filter(function(x){ return x.id !== s.id; }); commit();
-    });
     var grab = document.createElement("span");
     grab.className = "grab"; grab.textContent = "⠿"; grab.title = "Sleep om te verplaatsen";
-    side.appendChild(step); side.appendChild(unit); side.appendChild(del); side.appendChild(grab);
+    side.appendChild(step); side.appendChild(unit); side.appendChild(grab);
 
     /* datumregel: vastzetten op aankomst óf vertrek, zodat je ook terug kunt rekenen */
     var dates = document.createElement("div");
@@ -513,6 +510,33 @@
       });
       dates.appendChild(setBtn);
     }
+
+    /* een geplande stop weer weghalen: terug naar de ideeën, of helemaal weg */
+    var back = document.createElement("button");
+    back.type = "button"; back.className = "linkbtn"; back.textContent = "terug naar ideeën";
+    back.title = "Haal deze stop uit het plan en zet hem terug op de ideeënlijst";
+    back.addEventListener("click", function(){
+      var i = state.stops.findIndex(function(x){ return x.id === s.id; });
+      if(i < 0) return;
+      var block = null;
+      for(var k = i + 1; k < state.stops.length; k++){
+        if(state.stops[k].fixed){ block = state.stops[k].id; break; }
+      }
+      state.stops.splice(i, 1);
+      state.ideas.push({ id: uid(), name: s.name, days: s.days, block: block });
+      commit();
+    });
+
+    var drop = document.createElement("button");
+    drop.type = "button"; drop.className = "linkbtn danger"; drop.textContent = "verwijderen";
+    drop.title = "Deze stop helemaal weghalen";
+    drop.addEventListener("click", function(){
+      if(s.name && !confirm("“" + s.name + "” uit het plan halen?")) return;
+      state.stops = state.stops.filter(function(x){ return x.id !== s.id; });
+      commit();
+    });
+    dates.appendChild(back);
+    dates.appendChild(drop);
 
     li.appendChild(sw); li.appendChild(main); li.appendChild(side); li.appendChild(dates);
 
