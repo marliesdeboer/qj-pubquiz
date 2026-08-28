@@ -37,9 +37,12 @@ Zolang de reis loopt staat boven de totalen welke dag je vandaag zit, waar je be
 nachten er nog te gaan zijn; de dag van vandaag krijgt in de kalender een zwart randje.
 
 - **Ideeën**: onder de stops staat een verlanglijst van bestemmingen die je nog wilt inplannen.
-  Typ een naam, zet het aantal nachten, en kies in het keuzelijstje eronder in welk open blok hij
-  moet komen — dan wordt het een stop op die plek en verdwijnt hij van de lijst. Past een idee niet
-  in een blok, dan staat "(te lang)" achter dat blok.
+  Typ een naam en zet het aantal nachten. Met het keuzelijstje eronder **wijs je een idee toe aan
+  een open blok** — het blijft dan nog een idee, maar telt wel mee. De lijst is per blok gegroepeerd
+  met een teller: "18 / 32 n · 14 over", of rood "6 te veel" als je eroverheen gaat. Dezelfde stand
+  staat ook in het gestreepte blok tussen de stops.
+  Klopt de verdeling, klik dan **"zet in het plan"** bij dat blok: alle ideeën eronder worden in die
+  volgorde stops op die plek, en verdwijnen van de lijst.
 
 ## Bewaren
 
