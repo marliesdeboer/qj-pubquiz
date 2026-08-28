@@ -46,8 +46,15 @@ nachten er nog te gaan zijn; de dag van vandaag krijgt in de kalender een zwart 
 
 ## Bewaren
 
-Het plan wordt automatisch in je browser bewaard (localStorage), dus het staat er nog als je
-het tabblad sluit. Voor een back-up of om het plan op een andere computer te openen:
+De gepubliceerde webversie (`artifact.html`) legt het plan **in de pagina zelf** vast: met de knop
+"Opslaan" publiceert de pagina een nieuwe versie van zichzelf met jouw plan erin, en dat vangnet
+gaat na een halve minuut zonder klikken vanzelf af. Daardoor staat het plan er ook als je de pagina
+op een ander apparaat opent. De statusregel naast de knop zegt wanneer het is vastgelegd, of
+waarschuwt als deze weergave niet mag publiceren.
+
+Het losse `index.html` hieronder werkt anders:
+
+het plan wordt in je browser bewaard (localStorage), dus het staat er nog als je het tabblad sluit. Voor een back-up of om het plan op een andere computer te openen:
 
 - **Opslaan als bestand** → downloadt `sabbatical-plan.json`
 - **Openen** → laadt zo'n bestand weer in

@@ -1,4 +1,5 @@
 <title>Sabbatical 2026</title>
+<script id="plan-state" type="application/json">null</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -33,6 +34,11 @@
   header.top{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;margin-bottom:22px}
   header.top h1{font-size:30px}
   header.top p{margin:4px 0 0;color:var(--muted);font-size:14px;max-width:60ch}
+  .savebox{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+  .saveinfo{margin:0;font-size:12px;color:var(--muted);text-align:right;max-width:34ch}
+  .saveinfo.warn{color:var(--danger)}
+  .btn.primary[disabled]{opacity:.5;cursor:default}
+  .btn.primary[disabled]:hover{filter:none}
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
   .layout{display:grid;grid-template-columns:minmax(360px,420px) 1fr;gap:22px;align-items:start}
   @media (max-width:900px){ .layout{grid-template-columns:1fr} }
@@ -207,10 +213,14 @@
       <h1>Sabbatical 2026</h1>
       <p id="subtitle">Nachten per stop. Met 📌 zet je een <b>aankomst</b>- of <b>vertrekdatum</b> vast — zo plan je ook terug vanaf een boot of vlucht. Gestreept = nog te plannen.</p>
     </div>
-    <div class="btnrow">
-      <button class="btn" id="export" type="button">Opslaan als bestand</button>
-      <button class="btn" id="importBtn" type="button">Openen</button>
-      <input type="file" id="importFile" accept="application/json" hidden />
+    <div class="savebox">
+      <div class="btnrow">
+        <button class="btn primary" id="saveBtn" type="button">Opslaan</button>
+        <button class="btn" id="export" type="button">Opslaan als bestand</button>
+        <button class="btn" id="importBtn" type="button">Openen</button>
+        <input type="file" id="importFile" accept="application/json" hidden />
+      </div>
+      <p class="saveinfo" id="saveinfo"></p>
     </div>
   </header>
 
@@ -270,7 +280,7 @@
     </div>
   </div>
 
-  <footer>Je wijzigingen worden in deze browser bewaard. Gebruik “Opslaan als bestand” voor een back-up of om het plan op een ander apparaat te openen.</footer>
+  <footer>Je plan wordt op deze pagina zelf vastgelegd, dus het staat er ook op een ander apparaat. “Opslaan als bestand” geeft een losse back-up.</footer>
 </div>
 
 <script>
@@ -325,15 +335,123 @@
       })
     };
   }
-  function load(){
+  /* Het plan staat in de pagina zelf (die publiceert een nieuwe versie van zichzelf).
+     De browseropslag blijft als reserve, voor weergaven die niet mogen publiceren. */
+  function loadLocal(){
     try{
       var raw = localStorage.getItem(KEY);
       return raw ? normalise(JSON.parse(raw)) : null;
     }catch(e){ return null; }
   }
-  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+  function loadEmbedded(){
+    try{
+      var el = document.getElementById("plan-state");
+      if(!el) return null;
+      var raw = (el.textContent || "").trim();
+      if(!raw || raw === "null") return null;
+      return normalise(JSON.parse(raw));
+    }catch(e){ return null; }
+  }
+  function pickNewest(a, b){
+    if(!a) return b;
+    if(!b) return a;
+    return (b.updatedAt || 0) > (a.updatedAt || 0) ? b : a;
+  }
 
-  var state = load() || defaults();
+  var state = pickNewest(loadEmbedded(), loadLocal()) || defaults();
+
+  var page = null;            /* de artifact-runtime, als die er is */
+  var pageChecked = false;    /* runtime-antwoord binnen (of uitgebleven) */
+  var dirty = false, publishing = false, publishTimer = null;
+  var savedAt = null, saveProblem = "";
+
+  if(window.claude && typeof window.claude.use === "function"){
+    try{
+      window.claude.use("artifact").then(function(api){
+        page = api; pageChecked = true; updateSaveUI();
+      }).catch(function(){ pageChecked = true; updateSaveUI(); });
+    }catch(e){ pageChecked = true; }
+  }else{
+    pageChecked = true;
+  }
+
+  function save(){
+    state.updatedAt = Date.now();
+    try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+    dirty = true;
+    updateSaveUI();
+    clearTimeout(publishTimer);
+    publishTimer = setTimeout(publishNow, 30000);   /* vangnet als je niets klikt */
+  }
+
+  function timeLabel(d){
+    return String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0");
+  }
+
+  function updateSaveUI(){
+    var btn = document.getElementById("saveBtn");
+    var info = document.getElementById("saveinfo");
+    if(!btn || !info) return;
+
+    if(pageChecked && !page){
+      btn.style.display = "none";
+      info.className = "saveinfo warn";
+      info.textContent = "Deze weergave kan het plan niet vastleggen — het staat alleen in deze browser. Open de pagina op claude.ai, of maak een back-up met “Opslaan als bestand”.";
+      return;
+    }
+    btn.style.display = "";
+    if(publishing){
+      btn.disabled = true; btn.textContent = "Opslaan…";
+      info.className = "saveinfo"; info.textContent = "Bezig met vastleggen.";
+      return;
+    }
+    btn.disabled = !dirty;
+    btn.textContent = dirty ? "Opslaan" : "Opgeslagen";
+    info.className = "saveinfo" + (saveProblem ? " warn" : "");
+    if(saveProblem){
+      info.textContent = saveProblem;
+    }else if(dirty){
+      info.textContent = "Nog niet vastgelegd. Klik Opslaan — anders gebeurt het vanzelf na een halve minuut.";
+    }else if(savedAt){
+      info.textContent = "Vastgelegd om " + timeLabel(savedAt) + " · staat op elk apparaat dat deze pagina opent.";
+    }else{
+      info.textContent = "Wijzigingen worden op de pagina zelf vastgelegd.";
+    }
+  }
+
+  function publishNow(){
+    if(!page || publishing || !dirty) return;
+    publishing = true; saveProblem = ""; updateSaveUI();
+
+    fetch(location.href, { cache: "no-store" }).then(function(r){ return r.text(); }).then(function(src){
+      var open = '<script id="plan-state" type="application/json">';
+      var i = src.indexOf(open);
+      if(i < 0) throw new Error("geen opslagplek in de pagina");
+      var j = src.indexOf("<\/script>", i);
+      if(j < 0) throw new Error("geen opslagplek in de pagina");
+      var json = JSON.stringify(state).replace(/</g, "\\u003c");
+      return page.publish(src.slice(0, i + open.length) + json + src.slice(j));
+    }).then(function(){
+      dirty = false; savedAt = new Date(); publishing = false; updateSaveUI();
+    })["catch"](function(err){
+      publishing = false;
+      var code = err && err.code ? err.code : "";
+      if(code === "conflict"){
+        /* iemand anders was eerder; deze weergave laadt vanzelf de nieuwste versie */
+        saveProblem = "";
+      }else if(code === "not_granted" || code === "not_writer"){
+        saveProblem = "Je kunt deze pagina niet bewerken; je wijzigingen staan alleen in deze browser.";
+      }else{
+        saveProblem = "Vastleggen lukte niet. Probeer opnieuw, of maak een back-up met “Opslaan als bestand”.";
+      }
+      updateSaveUI();
+    });
+  }
+
+  document.getElementById("saveBtn").addEventListener("click", function(){
+    clearTimeout(publishTimer);
+    publishNow();
+  });
 
   /* ---------- schema ---------- */
   function schedule(){
@@ -983,5 +1101,6 @@
   });
 
   render();
+  updateSaveUI();
 })();
 </script>
