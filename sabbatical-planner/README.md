@@ -45,8 +45,9 @@ nachten er nog te gaan zijn; de dag van vandaag krijgt in de kalender een zwart 
   een open blok** — het blijft dan nog een idee, maar telt wel mee. De lijst is per blok gegroepeerd
   met een teller: "18 / 32 n · 14 over", of rood "6 te veel" als je eroverheen gaat. Dezelfde stand
   staat ook in het gestreepte blok tussen de stops.
-  Klopt de verdeling, klik dan **"zet in het plan"** bij dat blok: alle ideeën eronder worden in die
-  volgorde stops op die plek, en verdwijnen van de lijst.
+  Met ↑ en ↓ zet je de ideeën binnen een blok in de juiste reisvolgorde.
+  Klopt de verdeling, klik dan **"zet in het plan"** bij dat blok: alle ideeën eronder worden van
+  boven naar beneden stops op die plek, en verdwijnen van de lijst.
 
 ## Bewaren
 

@@ -120,6 +120,11 @@
                       border-radius:999px;background:var(--panel);color:var(--accent);font:inherit;
                       font-size:12px;font-weight:500;cursor:pointer}
   li.idea select.plan:disabled{color:var(--muted);cursor:default;opacity:.6}
+  .iside .arrow{width:25px;height:25px;border:1px solid var(--accent);background:var(--panel);
+                color:var(--accent);font-size:13px;font-weight:600;line-height:1;cursor:pointer;
+                border-radius:50%;padding:0}
+  .iside .arrow:hover:not([disabled]){background:var(--accent);color:#fff}
+  .iside .arrow[disabled]{border-color:var(--line);color:var(--muted);opacity:.35;cursor:default}
   .ideaform{display:flex;gap:6px}
   .ideaform input{flex:1;min-width:0;font-size:14px;padding:8px 11px}
   .ideas-empty{font-size:13px;color:var(--muted);padding:2px 2px 10px}
@@ -326,6 +331,7 @@
     if(!d || !Array.isArray(d.stops) || !d.start) return null;
     return {
       start: d.start,
+      updatedAt: Number(d.updatedAt) || 0,
       ideas: (Array.isArray(d.ideas) ? d.ideas : []).map(function(x){
         return { id: x.id || uid(), name: String(x.name || ""), days: clampDays(x.days),
                  block: x.block || null };
@@ -951,7 +957,7 @@
       if(b.ideas.length){
         var go = document.createElement("button");
         go.type = "button"; go.className = "linkbtn"; go.textContent = "zet in het plan";
-        go.title = "Maak stops van deze ideeën, in deze volgorde";
+        go.title = "Maak stops van deze ideeën, van boven naar beneden";
         go.addEventListener("click", function(){
           var at = b.gap.before, ids = {};
           b.ideas.forEach(function(idea){
@@ -990,12 +996,23 @@
 
     var ul = document.createElement("ul");
     ul.style.cssText = "list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:6px";
-    b.ideas.forEach(function(idea){ ul.appendChild(ideaRow(idea, budgets)); });
+    b.ideas.forEach(function(idea, i){ ul.appendChild(ideaRow(idea, budgets, b.ideas, i)); });
     li.appendChild(ul);
     return li;
   }
 
-  function ideaRow(idea, budgets){
+  /* De volgorde binnen een blok is ook de volgorde waarin "zet in het plan"
+     de stops neerzet, dus die moet je kunnen sorteren. */
+  function moveIdea(idea, siblings, i, dir){
+    var target = siblings[i + dir];
+    if(!target) return;
+    var a = state.ideas.indexOf(idea), b = state.ideas.indexOf(target);
+    if(a < 0 || b < 0) return;
+    state.ideas[a] = target; state.ideas[b] = idea;
+    commit();
+  }
+
+  function ideaRow(idea, budgets, siblings, pos){
     var li = document.createElement("li");
     li.className = "idea" + (idea.block ? " assigned" : "");
 
@@ -1015,6 +1032,18 @@
     step.appendChild(minus); step.appendChild(num); step.appendChild(plus);
     var unit = document.createElement("span"); unit.className = "unit"; unit.textContent = "n"; unit.title = "nachten";
 
+    var up = document.createElement("button");
+    up.type = "button"; up.className = "arrow"; up.textContent = "↑";
+    up.title = "Eerder in dit blok";
+    up.disabled = pos === 0;
+    up.addEventListener("click", function(){ moveIdea(idea, siblings, pos, -1); });
+
+    var down = document.createElement("button");
+    down.type = "button"; down.className = "arrow"; down.textContent = "↓";
+    down.title = "Later in dit blok";
+    down.disabled = pos === siblings.length - 1;
+    down.addEventListener("click", function(){ moveIdea(idea, siblings, pos, 1); });
+
     var del = document.createElement("button");
     del.type = "button"; del.className = "btn ghost"; del.textContent = "✕";
     del.title = "Van de lijst halen";
@@ -1022,7 +1051,8 @@
       state.ideas = state.ideas.filter(function(x){ return x.id !== idea.id; });
       commit();
     });
-    side.appendChild(step); side.appendChild(unit); side.appendChild(del);
+    side.appendChild(step); side.appendChild(unit);
+    side.appendChild(up); side.appendChild(down); side.appendChild(del);
 
     var assign = document.createElement("select");
     assign.className = "assign";
